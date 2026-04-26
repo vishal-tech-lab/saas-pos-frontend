@@ -1,0 +1,122 @@
+/* Add to your CSS file */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Ultra-smooth animations */
+* {
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Focus states for accessibility */
+input:focus,
+button:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+/* Smooth number transitions */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Selection styling */
+::selection {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+/* Keyboard shortcut styling */
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #666;
+  background-color: #333;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 2px 4px;
+  box-shadow: inset 0 -1px 0 #222;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Performance optimizations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Micro-interactions */
+button:active {
+  transform: scale(0.98);
+}
+
+input:focus {
+  transform: scale(1.01);
+}
+
+/* Dark mode optimized colors */
+@media (prefers-color-scheme: dark) {
+  .bg-\[0a0a0a\] {
+    background-color: #0a0a0a;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .border-\[333\] {
+    border-color: #666;
+  }
+  
+  .text-\[666\] {
+    color: #999;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

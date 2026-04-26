@@ -1,0 +1,1007 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+.authPage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  overflow: hidden;
+  background: #07110b;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+}
+
+.authPage,
+.authPage * {
+  box-sizing: border-box;
+}
+
+.authPage h2,
+.authPage p,
+.authPage a,
+.authPage label,
+.authPage button,
+.authPage input {
+  font-family: "Poppins", sans-serif;
+}
+
+.authBg {
+  position: absolute;
+  inset: 0;
+  background-image: url("/assets/bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.04);
+  transition: transform 1.4s ease, opacity 1.2s ease;
+  opacity: 0;
+}
+
+.loaded .authBg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.authOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(0, 0, 0, 0.72),
+    rgba(6, 30, 18, 0.38),
+    rgba(0, 0, 0, 0.72)
+  );
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.loaded .authOverlay {
+  opacity: 1;
+}
+
+.footer {
+  position: relative;
+  z-index: 2;
+  margin-top: 30px;
+  text-align: center;
+  padding: 15px;
+  font-size: 14px;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.8s ease;
+  transition-delay: 0.55s;
+}
+
+.loaded .footer {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer a {
+  color: #86efac;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+  color: #4ade80;
+}
+
+.authWrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 800px;
+  height: 500px;
+  border: 2px solid #22c55e;
+  box-shadow: 0 0 25px rgba(34, 197, 94, 0.38);
+  overflow: hidden;
+  background: rgba(7, 17, 11, 0.18);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transform: translateY(40px) scale(0.98);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.loaded .authWrapper {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.credentialsPanel {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.signin {
+  left: 0;
+  padding: 0 40px;
+}
+
+.credentialsPanel.signin .slideElement {
+  transform: translateX(0%);
+  transition: 0.7s ease;
+  opacity: 1;
+}
+
+.credentialsPanel.signin .slideElement:nth-child(1) {
+  transition-delay: 2.1s;
+}
+
+.credentialsPanel.signin .slideElement:nth-child(2) {
+  transition-delay: 2.2s;
+}
+
+.credentialsPanel.signin .slideElement:nth-child(3) {
+  transition-delay: 2.3s;
+}
+
+.credentialsPanel.signin .slideElement:nth-child(4) {
+  transition-delay: 2.4s;
+}
+
+.credentialsPanel.signin .slideElement:nth-child(5) {
+  transition-delay: 2.5s;
+}
+
+.authPage:not(.loaded) .credentialsPanel.signin .slideElement {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(8px);
+}
+
+.loaded .credentialsPanel.signin .slideElement {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.loaded .credentialsPanel.signin h2.slideElement {
+  transition: 0.75s ease;
+  transition-delay: 0.5s;
+}
+
+.loaded .credentialsPanel.signin form .slideElement:nth-child(1) {
+  transition: 0.75s ease;
+  transition-delay: 0.65s;
+}
+
+.loaded .credentialsPanel.signin form .slideElement:nth-child(2) {
+  transition: 0.75s ease;
+  transition-delay: 0.8s;
+}
+
+.loaded .credentialsPanel.signin form .slideElement:nth-child(3) {
+  transition: 0.75s ease;
+  transition-delay: 0.95s;
+}
+
+.loaded .credentialsPanel.signin form .slideElement:nth-child(4) {
+  transition: 0.75s ease;
+  transition-delay: 1.1s;
+}
+
+.toggled .credentialsPanel.signin .slideElement {
+  transform: translateX(-120%);
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.toggled .credentialsPanel.signin .slideElement:nth-child(1) {
+  transition-delay: 0s;
+}
+
+.toggled .credentialsPanel.signin .slideElement:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.toggled .credentialsPanel.signin .slideElement:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+.toggled .credentialsPanel.signin .slideElement:nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+.toggled .credentialsPanel.signin .slideElement:nth-child(5) {
+  transition-delay: 0.4s;
+}
+
+.signup {
+  right: 0;
+  left: auto;
+  padding: 0 60px;
+}
+
+.credentialsPanel.signup .slideElement {
+  transform: translateX(120%);
+  transition: 0.7s ease;
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.credentialsPanel.signup .slideElement:nth-child(1) {
+  transition-delay: 0s;
+}
+
+.credentialsPanel.signup .slideElement:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.credentialsPanel.signup .slideElement:nth-child(3) {
+  transition-delay: 0.2s;
+}
+
+.credentialsPanel.signup .slideElement:nth-child(4) {
+  transition-delay: 0.3s;
+}
+
+.credentialsPanel.signup .slideElement:nth-child(5) {
+  transition-delay: 0.4s;
+}
+
+.credentialsPanel.signup .slideElement:nth-child(6) {
+  transition-delay: 0.5s;
+}
+
+.toggled .credentialsPanel.signup .slideElement {
+  transform: translateX(0%);
+  opacity: 1;
+  filter: blur(0px);
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(1) {
+  transition-delay: 1.7s;
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(2) {
+  transition-delay: 1.8s;
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(3) {
+  transition-delay: 1.9s;
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(4) {
+  transition-delay: 1.9s;
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(5) {
+  transition-delay: 2s;
+}
+
+.toggled .credentialsPanel.signup .slideElement:nth-child(6) {
+  transition-delay: 2.1s;
+}
+
+.credentialsPanel h2 {
+  font-size: 32px;
+  text-align: center;
+  color: #f0fdf4;
+}
+
+.fieldWrapper {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin-top: 25px;
+}
+
+.inputField {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 2px solid #ffffff;
+  padding-right: 28px;
+  transition: 0.5s;
+}
+
+.inputField:focus,
+.inputField:valid {
+  border-bottom: 2px solid #4ade80;
+}
+
+.fieldLabel {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #ffffff;
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.inputField:focus ~ .fieldLabel,
+.inputField:valid ~ .fieldLabel {
+  top: -5px;
+  color: #86efac;
+}
+
+.fieldIcon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: #ffffff;
+  transition: 0.5s;
+}
+
+.inputField:focus ~ .fieldIcon,
+.inputField:valid ~ .fieldIcon {
+  color: #86efac;
+}
+
+/* ── Autofill override ── */
+.inputField:-webkit-autofill,
+.inputField:-webkit-autofill:hover,
+.inputField:-webkit-autofill:focus,
+.inputField:-webkit-autofill:active {
+  /* 99999s delay = browser autofill bg color never visually appears */
+  transition: background-color 99999s ease-in-out 0s, color 99999s ease-in-out 0s !important;
+  -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #ffffff !important;
+  border-bottom: 2px solid #4ade80 !important;
+  filter: none !important;
+}
+
+/* Float the label up when field is autofilled */
+.inputField:-webkit-autofill ~ .fieldLabel {
+  top: -5px !important;
+  font-size: 12px !important;
+  color: #86efac !important;
+}
+
+/* Tint the icon green on autofill */
+.inputField:-webkit-autofill ~ .fieldIcon {
+  color: #86efac !important;
+}
+
+/* ── Eye toggle button ── */
+.eyeToggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* fieldIcon styles handle the svg size/color — button is just a shell */
+}
+
+.eyeToggle .fieldIcon {
+  /* icon sits naturally inside the button; override position so it's inline */
+  position: static;
+  transform: none;
+}
+
+.submitButton {
+  position: relative;
+  width: 100%;
+  height: 45px;
+  background: transparent;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #22c55e;
+  overflow: hidden;
+  z-index: 1;
+  color: #fff;
+}
+
+.submitButton::before {
+  content: "";
+  position: absolute;
+  height: 300%;
+  width: 100%;
+  background: linear-gradient(#07110b, #22c55e, #07110b, #86efac);
+  top: -100%;
+  left: 0;
+  z-index: -1;
+  transition: 0.5s;
+}
+
+.submitButton:hover::before {
+  top: 0;
+}
+
+.switchLink {
+  font-size: 14px;
+  text-align: center;
+  margin: 20px 0 10px;
+}
+
+.switchLink p {
+  color: #fff;
+}
+
+.switchLink a {
+  text-decoration: none;
+  color: #86efac;
+  font-weight: 600;
+}
+
+.switchLink a:hover {
+  text-decoration: underline;
+  color: #4ade80;
+}
+
+/* =============================================
+   ✅ INLINE MESSAGE — replaces all alert() popups
+   Appears inside the glass card with animation
+   ============================================= */
+.inlineMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 0.2px;
+  animation: msgSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+/* green glow bar on the left */
+.inlineMessage::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 8px 0 0 8px;
+}
+
+.inlineMessage.success {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: #86efac;
+}
+
+.inlineMessage.success::before {
+  background: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+}
+
+.inlineMessage.error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
+
+.inlineMessage.error::before {
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+}
+
+.msgIcon {
+  font-size: 15px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+@keyframes msgSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.85);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    filter: blur(0px);
+  }
+}
+
+/* ============================================= */
+
+.welcomeSection {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.welcomeSection.signin {
+  right: 0;
+  left: auto;
+  text-align: right;
+  padding: 0 40px 60px 150px;
+}
+
+.welcomeSection.signin .slideElement {
+  transform: translateX(0);
+  transition: 0.7s ease;
+  opacity: 1;
+  filter: blur(0px);
+}
+
+.authPage:not(.loaded) .welcomeSection.signin .slideElement {
+  opacity: 0;
+  transform: translateX(40px);
+  filter: blur(8px);
+}
+
+.loaded .welcomeSection.signin .slideElement {
+  opacity: 1;
+  transform: translateX(0);
+  filter: blur(0);
+  transition: 0.8s ease;
+  transition-delay: 0.9s;
+}
+
+.welcomeSection.signin .slideElement:nth-child(1) {
+  transition-delay: 2s;
+}
+
+.welcomeSection.signin .slideElement:nth-child(2) {
+  transition-delay: 2.1s;
+}
+
+.toggled .welcomeSection.signin .slideElement {
+  transform: translateX(120%);
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.toggled .welcomeSection.signin .slideElement:nth-child(1) {
+  transition-delay: 0s;
+}
+
+.toggled .welcomeSection.signin .slideElement:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.welcomeSection.signup {
+  left: 0;
+  right: auto;
+  text-align: left;
+  padding: 0 150px 60px 38px;
+  pointer-events: none;
+}
+
+.welcomeSection.signup .slideElement {
+  transform: translateX(-120%);
+  transition: 0.7s ease;
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.welcomeSection.signup .slideElement:nth-child(1) {
+  transition-delay: 0s;
+}
+
+.welcomeSection.signup .slideElement:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.toggled .welcomeSection.signup .slideElement {
+  transform: translateX(0%);
+  opacity: 1;
+  filter: blur(0);
+}
+
+.toggled .welcomeSection.signup .slideElement:nth-child(1) {
+  transition-delay: 1.7s;
+}
+
+.toggled .welcomeSection.signup .slideElement:nth-child(2) {
+  transition-delay: 1.8s;
+}
+
+.welcomeSection h2 {
+  text-transform: uppercase;
+  font-size: 36px;
+  line-height: 1.3;
+  color: #f0fdf4;
+}
+
+.backgroundShape {
+  position: absolute;
+  right: 0;
+  top: -5px;
+  height: 600px;
+  width: 850px;
+  background: linear-gradient(45deg, #07110b, #22c55e);
+  transform: rotate(10deg) skewY(40deg);
+  transform-origin: bottom right;
+  transition: 1.5s ease;
+  transition-delay: 1.6s;
+  opacity: 0;
+  z-index: 1;
+}
+
+.loaded .authWrapper .backgroundShape {
+  opacity: 1;
+  transition-delay: 0.15s;
+}
+
+.toggled .backgroundShape {
+  transform: rotate(0deg) skewY(0deg);
+  transition-delay: 0.5s;
+}
+
+.secondaryShape {
+  position: absolute;
+  left: 250px;
+  top: 100%;
+  height: 700px;
+  width: 850px;
+  background: #0b1f17;
+  border-top: 3px solid #4ade80;
+  transform: rotate(0deg) skewY(0deg);
+  transform-origin: bottom left;
+  transition: 1.5s ease;
+  transition-delay: 0.5s;
+  opacity: 0;
+  z-index: 1;
+}
+
+.loaded .authWrapper .secondaryShape {
+  opacity: 1;
+  transition-delay: 0.35s;
+}
+
+.toggled .secondaryShape {
+  transform: rotate(-11deg) skewY(-41deg);
+  transition-delay: 1.2s;
+}
+
+@media (max-width: 768px) {
+  .authPage {
+    padding: 10px;
+  }
+
+  .footer {
+    margin-top: 20px;
+    font-size: 13px;
+  }
+
+  .authWrapper {
+    height: auto;
+    min-height: 500px;
+  }
+
+  .credentialsPanel,
+  .welcomeSection {
+    width: 100%;
+    position: relative;
+  }
+
+  .credentialsPanel.signin,
+  .credentialsPanel.signup {
+    padding: 40px 30px;
+    left: 0;
+    right: 0;
+  }
+
+  .credentialsPanel.signin {
+    display: flex;
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .credentialsPanel.signup {
+    display: none;
+  }
+
+  .toggled .credentialsPanel.signin {
+    display: none;
+    animation: fadeOutDown 0.6s ease forwards;
+  }
+
+  .toggled .credentialsPanel.signup {
+    display: flex;
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .credentialsPanel.signin .slideElement,
+  .credentialsPanel.signup .slideElement {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+    animation: slideInUp 0.5s ease forwards;
+  }
+
+  .credentialsPanel.signin .slideElement:nth-child(1),
+  .credentialsPanel.signup .slideElement:nth-child(1) {
+    animation-delay: 0.1s;
+    opacity: 0;
+  }
+
+  .credentialsPanel.signin .slideElement:nth-child(2),
+  .credentialsPanel.signup .slideElement:nth-child(2) {
+    animation-delay: 0.2s;
+    opacity: 0;
+  }
+
+  .credentialsPanel.signin .slideElement:nth-child(3),
+  .credentialsPanel.signup .slideElement:nth-child(3) {
+    animation-delay: 0.3s;
+    opacity: 0;
+  }
+
+  .credentialsPanel.signin .slideElement:nth-child(4),
+  .credentialsPanel.signup .slideElement:nth-child(4) {
+    animation-delay: 0.4s;
+    opacity: 0;
+  }
+
+  .credentialsPanel.signin .slideElement:nth-child(5),
+  .credentialsPanel.signup .slideElement:nth-child(5) {
+    animation-delay: 0.5s;
+    opacity: 0;
+  }
+
+  .credentialsPanel.signup .slideElement:nth-child(6) {
+    animation-delay: 0.6s;
+    opacity: 0;
+  }
+
+  .welcomeSection {
+    display: none;
+  }
+
+  .backgroundShape,
+  .secondaryShape {
+    display: none;
+  }
+
+  .fieldWrapper {
+    margin-top: 20px;
+  }
+
+  .credentialsPanel h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .inlineMessage {
+    font-size: 12px;
+    padding: 9px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .credentialsPanel.signin,
+  .credentialsPanel.signup {
+    padding: 30px 20px;
+  }
+
+  .credentialsPanel h2 {
+    font-size: 24px;
+  }
+
+  .inputField,
+  .fieldLabel {
+    font-size: 14px;
+  }
+
+  .submitButton {
+    font-size: 14px;
+    height: 40px;
+  }
+
+  .switchLink {
+    font-size: 13px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fullScreenApprovalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(7, 17, 11, 0.72);
+  backdrop-filter: blur(12px);
+  padding: 20px;
+}
+
+.fullScreenApprovalCard {
+  width: min(720px, 100%);
+  min-height: 320px;
+  border-radius: 24px;
+  background: rgba(7, 17, 11, 0.92);
+  border: 2px solid rgba(34, 197, 94, 0.28);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 28px;
+}
+
+.fullApprovalIconWrap {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+}
+
+.fullApprovalRing {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(132, 204, 22, 0.16);
+  border-top-color: #84cc16;
+  border-right-color: #65a30d;
+  animation: fullApprovalSpin 1.4s linear infinite;
+}
+
+.fullApprovalIcon {
+  width: 60px;
+  height: 60px;
+  color: #84cc16;
+  animation: fullApprovalFloat 1.8s ease-in-out infinite;
+}
+
+.fullApprovalTitle {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.fullApprovalText {
+  margin-top: 16px;
+  max-width: 500px;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.fullApprovalLoader {
+  margin-top: 22px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.fullApprovalLoader span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #bef264;
+  opacity: 0.4;
+  animation: fullApprovalDots 1.2s ease-in-out infinite;
+}
+
+.fullApprovalLoader span:nth-child(2) {
+  animation-delay: 0.18s;
+}
+
+.fullApprovalLoader span:nth-child(3) {
+  animation-delay: 0.36s;
+}
+
+@keyframes fullApprovalSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fullApprovalFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fullApprovalDots {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+}
+
+@media (max-width: 768px) {
+  .fullScreenApprovalCard {
+    min-height: 280px;
+    padding: 30px 20px;
+  }
+
+  .fullApprovalTitle {
+    font-size: 1.55rem;
+  }
+
+  .fullApprovalText {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .fullApprovalIconWrap {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 18px;
+  }
+
+  .fullApprovalIcon {
+    width: 48px;
+    height: 48px;
+  }
+}

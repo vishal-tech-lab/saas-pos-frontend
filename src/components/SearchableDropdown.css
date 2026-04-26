@@ -1,0 +1,29 @@
+.dropdown-container {
+  position: relative;
+  width: 250px; /* adjust as needed */
+}
+
+.dropdown-list {
+  position: absolute;
+  top: 100%; /* appear just below input */
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 180px; /* 👈 fixed height */
+  overflow-y: auto; /* 👈 scroll inside */
+  z-index: 999; /* keep it above other elements */
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.dropdown-list li {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.dropdown-list li:hover {
+  background-color: #f0f0f0;
+}
