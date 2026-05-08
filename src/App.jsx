@@ -16,7 +16,7 @@ import InventoryOperation from "./pages/Dashboard/items/InventoryOperation";
 import Setting from "./pages/Dashboard/Settting/Setting";
 import RolesPermissions from "./pages/Dashboard/Settting/roles/RolesPermissions";
 import Bill from "./pages/Dashboard/Reports/Bill";
-import MultipleBills from "./pages/Dashboard/Reports/Multiplebills";
+import MultipleBills from "./pages/Dashboard/Reports/MultipleBills";
 import Customerrecord from "./pages/Dashboard/Reports/Customerrecord";
 
 // Other Pages
