@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
 import {
   BarChart3,
   FileText,
@@ -8,15 +9,19 @@ import {
   Users,
   ShoppingCart,
   ChevronRight,
+  ChevronDown,
   Leaf,
   Settings,
   Menu,
   X,
+  CreditCard,
+  TrendingDown,
 } from "lucide-react";
 
 function Sidebar({ isCollapsed, setIsCollapsed }) {
   const location = useLocation();
-  const [hoveredItem, setHoveredItem] = useState(null);
+
+  const [openMenu, setOpenMenu] = useState(null);
 
   const menuItems = [
     {
@@ -26,6 +31,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
       color: "from-blue-500 to-indigo-500",
       description: "Analytics & Overview",
     },
+
     {
       path: "/dashboard/reports",
       name: "Reports",
@@ -33,6 +39,7 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
       color: "from-green-500 to-emerald-500",
       description: "Business Reports",
     },
+
     {
       path: "/dashboard/InventoryOperation",
       name: "Items",
@@ -40,20 +47,79 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
       color: "from-orange-500 to-red-500",
       description: "Vegetable Inventory",
     },
+
+    // SALES MENU
     {
-      path: "/dashboard/salesopeartion",
       name: "Sales",
       icon: <ShoppingCart className="w-5 h-5" />,
       color: "from-teal-500 to-cyan-500",
       description: "Sales Operations",
+      submenuKey: "sales",
+
+      submenu: [
+        {
+          name: "Sales Register",
+          path: "/sales/salesregister",
+        },
+        {
+          name: "Sales Report",
+          path: "/sales/salesreport",
+        },
+        {
+          name: "Sales Update",
+          path: "/sales/salesupadate",
+        },
+        {
+          name: "Customer Register",
+          path: "/sales/customerregister",
+        },
+        {
+          name: "Customer Report",
+          path: "/sales/customerreport",
+        },
+        {
+          name: "Customer Update",
+          path: "/sales/customeredit",
+        },
+      ],
     },
+
+    // FINANCE MENU
     {
-      path: "/dashboard/FinanceOperation",
       name: "Finance",
-      icon: <Users className="w-5 h-5" />,
+      icon: <CreditCard className="w-5 h-5" />,
       color: "from-purple-500 to-pink-500",
-      description: "Payment Management",
+      description: "Finance Operations",
+      submenuKey: "finance",
+
+      submenu: [
+        {
+          name: "Payment Register",
+          path: "/fianance/paymentregister",
+        },
+        {
+          name: "Payment Report",
+          path: "/fianance/paymentreport",
+        },
+        {
+          name: "Payment Update",
+          path: "/fianance/paymentedit",
+        },
+        {
+          name: "Expense Register",
+          path: "/fianance/expenseregister",
+        },
+        {
+          name: "Expense Report",
+          path: "/fianance/expensereport",
+        },
+        {
+          name: "Expense Update",
+          path: "/fianance/expenseedit",
+        },
+      ],
     },
+
     {
       path: "/dashboard/settings",
       name: "Settings",
@@ -68,16 +134,15 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
 
   return (
     <motion.div
-  initial={{ x: -30 }}
-  animate={{ x: 0 }}
-  className={`relative h-[calc(100vh-6rem)] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col transition-all duration-500 shadow-2xl ${
-    isCollapsed ? "w-16" : "w-64"
-  }`}
->
+      initial={{ x: -30 }}
+      animate={{ x: 0 }}
+      className={`relative h-[calc(100vh-6rem)] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white flex flex-col transition-all duration-500 shadow-2xl ${
+        isCollapsed ? "w-16" : "w-64"
+      }`}
+    >
       {/* HEADER */}
       <div className="relative z-10 px-3 py-4 border-b border-slate-700/60 shrink-0">
         <div className="flex items-center justify-between">
-
           {/* LOGO */}
           <motion.div layout className="flex items-center gap-2">
             <motion.div
@@ -120,28 +185,26 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
         </div>
       </div>
 
-      {/* NAV ITEMS */}
-      <nav className="flex-1 px-3 py-4 space-y-2">
-        <AnimatePresence>
-          {menuItems.map((item, index) => {
+      {/* MENU */}
+      <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto">
+        {menuItems.map((item, index) => {
+          // NORMAL MENU
+          if (!item.submenu) {
             const isActive = isActiveRoute(item.path);
 
             return (
               <motion.div
-                key={item.path}
+                key={index}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.08 }}
               >
                 <Link
                   to={item.path}
-                  onMouseEnter={() => setHoveredItem(item.path)}
-                  onMouseLeave={() => setHoveredItem(null)}
                   className={`block ${
                     isActive ? "translate-x-1" : "hover:translate-x-1"
                   }`}
                 >
-                  <motion.div
+                  <div
                     className={`flex items-center rounded-xl px-3 py-3 transition ${
                       isActive
                         ? `bg-gradient-to-r ${item.color}`
@@ -157,27 +220,101 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
                     </div>
 
                     {!isCollapsed && (
-                      <div className="ml-3 flex-1">
-                        <p className="text-sm font-semibold">{item.name}</p>
+                      <>
+                        <div className="ml-3 flex-1">
+                          <p className="text-sm font-semibold">
+                            {item.name}
+                          </p>
+
+                          <p className="text-xs text-slate-400">
+                            {item.description}
+                          </p>
+                        </div>
+
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                      </>
+                    )}
+                  </div>
+                </Link>
+              </motion.div>
+            );
+          }
+
+          // SUBMENU MENU
+          return (
+            <div key={index}>
+              <button
+                onClick={() =>
+                  setOpenMenu(
+                    openMenu === item.submenuKey
+                      ? null
+                      : item.submenuKey
+                  )
+                }
+                className="w-full"
+              >
+                <div className="flex items-center rounded-xl px-3 py-3 hover:bg-slate-800 transition">
+                  <div className="text-slate-300">{item.icon}</div>
+
+                  {!isCollapsed && (
+                    <>
+                      <div className="ml-3 flex-1 text-left">
+                        <p className="text-sm font-semibold">
+                          {item.name}
+                        </p>
+
                         <p className="text-xs text-slate-400">
                           {item.description}
                         </p>
                       </div>
-                    )}
 
-                    {!isCollapsed && (
-                      <ChevronRight className="w-4 h-4 text-slate-400" />
-                    )}
+                      {openMenu === item.submenuKey ? (
+                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-slate-400" />
+                      )}
+                    </>
+                  )}
+                </div>
+              </button>
+
+              {/* SUBMENU ITEMS */}
+              <AnimatePresence>
+                {openMenu === item.submenuKey && !isCollapsed && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="ml-6 mt-2 space-y-1 overflow-hidden"
+                  >
+                    {item.submenu.map((subItem, subIndex) => {
+                      const isSubActive = isActiveRoute(subItem.path);
+
+                      return (
+                        <Link
+                          key={subIndex}
+                          to={subItem.path}
+                          className={`block px-3 py-2 rounded-lg text-sm transition ${
+                            isSubActive
+                              ? "bg-green-500 text-white"
+                              : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                          }`}
+                        >
+                          {subItem.name}
+                        </Link>
+                      );
+                    })}
                   </motion.div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
       </nav>
 
       {/* DECORATION */}
       <div className="absolute top-20 right-4 w-12 h-12 bg-green-500/10 rounded-full blur-xl"></div>
+
       <div className="absolute bottom-20 left-4 w-8 h-8 bg-blue-500/10 rounded-full blur-lg"></div>
     </motion.div>
   );
