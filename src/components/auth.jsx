@@ -152,8 +152,18 @@ function Auth() {
       localStorage.setItem("user", JSON.stringify(data));
 
       setTimeout(() => {
-        window.location.href = "/";
-      }, 1500);
+
+   // ADMIN → Dashboard
+   if (data.role === "ADMIN") {
+      window.location.href = "/dashboard";
+   }
+
+   // USER → Home
+   else {
+      window.location.href = "/";
+   }
+
+}, 1500);
     } catch (err) {
       console.error(err);
       setLoginMsg({
