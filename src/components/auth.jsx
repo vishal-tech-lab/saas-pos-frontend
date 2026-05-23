@@ -86,58 +86,77 @@ function Auth() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+ const handleLogin = async (e) => {
 
-    try {
-      const res = await fetch("https://saas-pos-backend-m8et.onrender.com/auth/login", {
+  e.preventDefault();
+
+  try {
+
+    const res = await fetch(
+      "https://saas-pos-backend-m8et.onrender.com/auth/login",
+      {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(loginData),
-      });
-
-      const text = await res.text();
-      let data = null;
-
-      try {
-        data = JSON.parse(text);
-      } catch {
-        data = null;
       }
+    );
 
-      if (!res.ok) {
-        setLoginMsg({
-          text: text || data?.message || "Login failed",
-          type: "error",
-        });
-        setTimeout(() => setLoginMsg({ text: "", type: "" }), 3000);
-        return;
-      }
+    const data = await res.json();
+
+    if (!res.ok) {
 
       setLoginMsg({
-        text: "Login successful! Redirecting...",
-        type: "success",
-      });
-
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("tenant", data.schema);
-
-      setTimeout(() => {
-        if (data.role === "ADMIN") {
-          window.location.href = "/dashboard";
-        } else {
-          window.location.href = "/";
-        }
-      }, 1500);
-    } catch (err) {
-      console.error(err);
-      setLoginMsg({
-        text: "Server error. Please try again.",
+        text:
+          data?.message || "Login failed",
         type: "error",
       });
-      setTimeout(() => setLoginMsg({ text: "", type: "" }), 3000);
+
+      return;
     }
-  };
+
+    setLoginMsg({
+      text:
+        "Login successful! Redirecting...",
+      type: "success",
+    });
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify(data)
+    );
+
+    localStorage.setItem(
+      "tenant",
+      data.schema
+    );
+
+    setTimeout(() => {
+
+      if (data.role === "ADMIN") {
+
+        window.location.href =
+          "/dashboard";
+
+      } else {
+
+        window.location.href = "/";
+      }
+
+    }, 1500);
+
+  } catch (err) {
+
+    console.error(err);
+
+    setLoginMsg({
+      text:
+        "Server error. Please try again.",
+      type: "error",
+    });
+  }
+};
 
   return (
     <div className={`${styles.authPage} ${isLoaded ? styles.loaded : ""}`}>
