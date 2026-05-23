@@ -8,6 +8,11 @@ function ItemRegister({ onClose }) {
   const navigate = useNavigate();
   const [isLoaded, setIsLoaded] = useState(false);
   const [itemname, setItemname] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("Vegetables");
+  const [categories, setCategories] = useState([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [showCategoryInput, setShowCategoryInput] = useState(false);
   const [nameError, setNameError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -17,7 +22,42 @@ function ItemRegister({ onClose }) {
   useEffect(() => {
     setIsLoaded(true);
     window.scrollTo(0, 0);
+
+    const getCategories = async () => {
+      try {
+        const response = await insatnces.get("/itemcategory/all");
+        setCategories(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getCategories();
   }, []);
+
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) return;
+
+    try {
+      const response = await insatnces.post(
+        "/itemcategory/register",
+        {
+          itemcategoryname: newCategory,
+        }
+      );
+
+      setCategories([
+        ...categories,
+        response.data,
+      ]);
+
+      setCategory(response.data.itemcategoryname);
+      setNewCategory("");
+      setShowCategoryInput(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,12 +73,18 @@ function ItemRegister({ onClose }) {
     setIsSubmitting(true);
 
     try {
-      await insatnces.post("/item/register", { itemname });
+      await insatnces.post("/product/register", {
+        itemname,
+        price: Number(price),
+        category,
+      });
       
       // SHOW SUCCESS TOAST
       setToast({ show: true, message: 'Item successfully saved ✅', type: 'success' });
 
       setItemname("");
+      setPrice("");
+      setCategory("Vegetables");
       
       // Hide toast after 3 seconds
       setTimeout(() => {
@@ -139,22 +185,67 @@ function ItemRegister({ onClose }) {
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1 text-sm">Category</label>
-                    <select className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white/90 backdrop-blur-xl">
-                      <option>Vegetables</option>
-                      <option>Fruits</option>
-                      <option>Leafy Greens</option>
-                      <option>Herbs</option>
-                    </select>
+                    <label htmlFor="price" className="block text-slate-700 font-semibold mb-1 text-sm">Price</label>
+                    <input
+                      type="number"
+                      id="price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      placeholder="Enter price"
+                      className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white/90 backdrop-blur-xl"
+                      disabled={isSubmitting}
+                    />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1 text-sm">Unit Type</label>
-                    <select className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all bg-white/90 backdrop-blur-xl">
-                      <option>KG</option>
-                      <option>Grams</option>
-                      <option>Pieces</option>
-                      <option>Bundles</option>
-                    </select>
+                    <label className="block text-slate-700 font-semibold mb-2 text-sm">
+                      Category
+                    </label>
+
+                    <div className="flex flex-wrap gap-3">
+                      {categories.map((cat) => (
+                        <button
+                          key={cat.itemcategoryid}
+                          type="button"
+                          onClick={() => setCategory(cat.itemcategoryname)}
+                          disabled={isSubmitting}
+                          className={`px-4 py-3 rounded-xl font-semibold transition-all duration-300 border-2 ${
+                            category === cat.itemcategoryname
+                              ? "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-green-500 shadow-lg"
+                              : "bg-white/80 text-slate-700 border-gray-300 hover:border-green-400"
+                          }`}
+                        >
+                          {cat.itemcategoryname}
+                        </button>
+                      ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setShowCategoryInput(!showCategoryInput)}
+                        className="px-4 py-3 rounded-xl border-2 border-dashed border-green-400 text-green-600 font-semibold"
+                      >
+                        + Add Category
+                      </button>
+                    </div>
+
+                    {showCategoryInput && (
+                      <div className="flex gap-3 mt-4">
+                        <input
+                          type="text"
+                          value={newCategory}
+                          onChange={(e) => setNewCategory(e.target.value)}
+                          placeholder="New category"
+                          className="flex-1 px-4 py-3 rounded-xl border-2 border-gray-300"
+                        />
+
+                        <button
+                          type="button"
+                          onClick={handleAddCategory}
+                          className="px-5 py-3 rounded-xl bg-green-500 text-white font-semibold"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 

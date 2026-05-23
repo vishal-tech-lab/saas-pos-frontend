@@ -40,7 +40,7 @@ function Itemreport() {
   // Fetch items
   useEffect(() => {
     setIsLoading(true);
-    instances.get("/item/items")
+    instances.get("/product/all")
       .then(res => {
         const items = Array.isArray(res.data) ? res.data : [];
         // ✅ Apply Tamil alphabetical sorting on initial load
@@ -103,11 +103,18 @@ function Itemreport() {
     },
   ];
 
-  const tableHeaders = ["S.No", "Item Name"];
+  const tableHeaders = [
+    "S.No",
+    "Item Name",
+    "Category",
+    "Price"
+  ];
   const tableRows = filteredItems.map((item, index) => [
-  index + 1, // Just the number
-  item.itemname // Just the name (ReportLayout handles the bold/style)
-]);
+    index + 1,
+    item.itemname,
+    item.category,
+    `₹ ${item.price}`
+  ]);
 
   if (isLoading) {
     return (
@@ -186,7 +193,7 @@ function Itemreport() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-green-100 to-emerald-100">
                 <tr>
-                  {['S.No', 'Item Name'].map((header, index) => (
+                  {['S.No', 'Item Name', 'Category', 'Price'].map((header, index) => (
                     <th key={header} className="px-6 py-4 text-left text-sm font-semibold text-green-800 border-b border-green-200">
                       <motion.div 
                         initial={{ opacity: 0, x: -10 }} 
@@ -220,6 +227,14 @@ function Itemreport() {
                           <Box className="w-4 h-4 text-green-500 mr-2" />
                           {item.itemname}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-700">
+                        <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
+                          {item.category}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-bold text-emerald-600">
+                        ₹ {item.price}
                       </td>
                       
                     </motion.tr>

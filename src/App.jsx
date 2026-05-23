@@ -48,6 +48,8 @@ import Expenseedit from "./pages/Finance/Expense/Expenseedit";
 import ScrollToTop from "./components/ScrollToTop";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/profile/Profile";
+import Salesregisterplus from "./pages/Sales/Sale/Salesregisterplus";
+import Dailysales from "./pages/dailysales/Dailysales";
 
 // Wrapper
 const PageWrapper = ({ children }) => {
@@ -114,6 +116,8 @@ function App() {
           <Route path="/sales/salesregister" element={<Salesregister />} />
           <Route path="/sales/salesreport" element={<Salesreport />} />
           <Route path="/sales/salesupadate" element={<Salesedit />} />
+          <Route path="/sales/salesregisterplus" element={<Salesregisterplus/>} />
+
 
           {/* CUSTOMER */}
           <Route path="/sales/customerregister" element={<Customerregister />} />
@@ -157,6 +161,8 @@ function App() {
             <Route path="FinanceOperation" element={<FinanceOperation />} />
             <Route path="settings" element={<Setting />} />
             <Route path="settings/collaborators" element={<RolesPermissions />} />
+            <Route path="reports/Dailysales" element={<Dailysales />} />
+
           </Route>
 
           {/* PROFILE */}

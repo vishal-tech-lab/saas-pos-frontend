@@ -1,7 +1,11 @@
 import axios from "axios";
 
-const insatnces = axios.create({
-    baseURL: "https://govindanvegetables-backend.onrender.com",
+const api = axios.create({ baseURL: "http://localhost:8080" });
+
+api.interceptors.request.use((config) => {
+  const tenant = localStorage.getItem("tenant");
+  if (tenant) config.headers["X-Tenant-ID"] = tenant;
+  return config;
 });
 
-export default insatnces;
+export default api;

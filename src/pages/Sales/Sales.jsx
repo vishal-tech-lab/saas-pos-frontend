@@ -54,7 +54,7 @@ function Sales() {
       title: "Register Sale",
       description: "Create a new sales entry with customer details",
       buttonText: "Register",
-      onClick: () => navigate("/sales/salesregister"),
+      onClick: () => navigate("/sales/salesregisterplus"),
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-50 to-emerald-50"
     },

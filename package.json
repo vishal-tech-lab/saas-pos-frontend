@@ -25,6 +25,7 @@
     "flatpickr": "^4.6.13",
     "framer-motion": "^12.23.12",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.14.0",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.544.0",
