@@ -90,7 +90,7 @@ function Auth() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/auth/login", {
+      const res = await fetch("https://saas-pos-backend-m8et.onrender.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(loginData),
