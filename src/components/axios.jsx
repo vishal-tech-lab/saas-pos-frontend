@@ -78,9 +78,7 @@ api.interceptors.response.use(
   console.log("REFRESH FAILED");
   console.log(refreshError);
 
-  alert("Refresh Failed - Check Console");
-
-  return Promise.reject(refreshError);
+  return;
 }
     }
 
