@@ -35,11 +35,12 @@ import Dailysales from "./pages/dailysales/Dailysales";
 import Branches from "./pages/Branches/Branches";
 import KitchenProduction from "./pages/Inventory/KitchenProduction/KitchenProduction";
 import BranchStock from "./pages/Inventory/Branch/BranchStock";
-import StockTransfer from "./pages/Inventory/Stocktransfer/StockTransfer";
+
 import Auth from "./components/auth";
 import Inventory from "./pages/Inventory/Inventory";
 import Product from "./pages/Product/Product";
 import TenantLogin from "./components/TenantLogin";
+import StockTransfer from "./pages/Inventory/Stocktransfer/Stocktransfer";
 
 // Wrapper
 const PageWrapper = ({ children }) => {
@@ -89,7 +90,7 @@ function App() {
             }
           />
           <Route path="/inventory/branchstock" element={<BranchStock />} />
-          <Route path="/inventory/stocktransfer" element={<StockTransfer />} />
+          <Route path="/inventory/stocktransfer" element={<StockTransfer/>} />
           <Route path="/inventory/kitchenproduction" element={<KitchenProduction />} />
 
 {/* Product */}
