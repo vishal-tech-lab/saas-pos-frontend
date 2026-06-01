@@ -10,16 +10,15 @@ function Profile() {
       localStorage.getItem("user")
     );
 
-  useEffect(() => {
+ useEffect(() => {
 
-    if (!user) {
+  if (!user) {
 
-      navigate(
-        "/login/tenant_test"
-      );
-    }
+    navigate("/");
 
-  }, [user, navigate]);
+  }
+
+}, [user, navigate]);
 
   if (!user) return null;
 
@@ -27,7 +26,7 @@ function Profile() {
 
   localStorage.clear();
 
-  navigate("/login");
+  navigate("/");
 
 };
   return (

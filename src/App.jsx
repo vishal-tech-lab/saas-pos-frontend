@@ -74,7 +74,7 @@ function App() {
 
           {/* HOME */}
           <Route
-  path="/login"
+  path="/"
   element={<TenantLogin />}
 />
 
