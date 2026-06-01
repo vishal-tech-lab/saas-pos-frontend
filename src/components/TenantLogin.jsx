@@ -22,7 +22,7 @@ function TenantLogin() {
     setError("");
 
     try {
-      const { data } = await api.post("/auth/login", { username, password });
+      const { data } = await api.post("/tenant/login", { username, password });
 
       if (data.role !== "TENANT_OWNER") {
         setError("Only Tenant Owners can login here.");
