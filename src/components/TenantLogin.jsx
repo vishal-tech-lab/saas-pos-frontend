@@ -103,7 +103,7 @@ function TenantLogin() {
 
         {/* ── Branding Panel ── */}
         <div className={`${styles.welcomeSection} ${styles.signin}`}>
-          <h2 className={styles.slideElement}>Hi</h2>
+          <h2 className={styles.slideElement}>Welcome To</h2>
           <p className={styles.slideElement}>Tenant Owner Portal</p>
         </div>
       </div>
