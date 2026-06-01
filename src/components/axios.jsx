@@ -75,23 +75,13 @@ api.interceptors.response.use(
 
       } catch (refreshError) {
 
-        // LOGOUT USER
-        localStorage.clear();
+  console.log("REFRESH FAILED");
+  console.log(refreshError);
 
-        const tenant =
-          localStorage.getItem(
-            "tenant"
-          );
+  alert("Refresh Failed - Check Console");
 
-        window.location.href =
-          `/login/${
-            tenant || "tenant_test"
-          }`;
-
-        return Promise.reject(
-          refreshError
-        );
-      }
+  return Promise.reject(refreshError);
+}
     }
 
     return Promise.reject(error);
