@@ -2,7 +2,6 @@ import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 // Pages
-import Home from "./pages/Home/Home";
 
 // Dashboard
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
@@ -36,7 +35,7 @@ import Dailysales from "./pages/dailysales/Dailysales";
 import Branches from "./pages/Branches/Branches";
 import KitchenProduction from "./pages/Inventory/KitchenProduction/KitchenProduction";
 import BranchStock from "./pages/Inventory/Branch/BranchStock";
-import StockTransfer from "./pages/Inventory/StockTransfer/StockTransfer";
+import StockTransfer from "./pages/Inventory/Stocktransfer/StockTransfer";
 import Auth from "./components/auth";
 import Inventory from "./pages/Inventory/Inventory";
 import Product from "./pages/Product/Product";

@@ -9,7 +9,7 @@ import KitchenProduction from "../../Inventory/KitchenProduction/KitchenProducti
 import Branches from "../../Branches/Branches";
 import Inventory from "../../Inventory/Inventory";
 import BranchStock from "../../Inventory/Branch/BranchStock";
-import StockTransfer from "../../Inventory/Stocktransfer/Stocktransfer";
+import StockTransfer from "../../Inventory/Stocktransfer/StockTransfer";
 import Products from "../../Product/Product";
 import UserManagement from "../../Users/UserManagement";
 import SalesRegisterPlus from "../../POS/Sales";
