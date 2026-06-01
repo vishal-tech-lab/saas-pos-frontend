@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { getUsers, createUser, updateUser, deleteUser, getBranches } from "../../../../services/userService";
+import { getUsers, createUser, updateUser, deleteUser, getBranches } from "../../services/userService";
 
 const POPULAR_BRANCH_COUNT = 5;
 

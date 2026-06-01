@@ -28,17 +28,67 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { to: '/', label: 'Home', icon: <Home className="w-5 h-5" /> },
 
-    ...(user?.role === "ADMIN"
-      ? [
-          { to: '/stock', label: 'Stock', icon: <Package className="w-5 h-5" /> },
-          { to: '/sale', label: 'Order', icon: <ShoppingCart className="w-5 h-5" /> },
-          { to: '/finance', label: 'Finance', icon: <DollarSign className="w-5 h-5" /> },
-          { to: '/dashboard', label: 'Reports', icon: <BarChart3 className="w-5 h-5" /> },
-        ]
-      : []),
-  ];
+  {
+    to:
+      user?.role === "ROLE_ADMIN" || user?.role === "ROLE_MANAGER"
+        ? "/dashboard"
+        : "/",
+
+    label: "Home",
+
+    icon: <Home className="w-5 h-5" />
+  },
+
+  ...(      user?.role === "ROLE_ADMIN" || user?.role === "ROLE_MANAGER"
+
+
+    ? [
+
+        {
+          to: "/stock",
+
+          label: "Stock",
+
+          icon: (
+            <Package className="w-5 h-5" />
+          )
+        },
+
+        {
+          to: "/sale",
+
+          label: "Order",
+
+          icon: (
+            <ShoppingCart className="w-5 h-5" />
+          )
+        },
+
+        {
+          to: "/finance",
+
+          label: "Finance",
+
+          icon: (
+            <DollarSign className="w-5 h-5" />
+          )
+        },
+
+        {
+          to: "/dashboard",
+
+          label: "Reports",
+
+          icon: (
+            <BarChart3 className="w-5 h-5" />
+          )
+        },
+
+      ]
+
+    : []),
+];
 
   const isHome = location.pathname === '/';
 
