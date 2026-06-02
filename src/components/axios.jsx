@@ -52,15 +52,13 @@ api.interceptors.response.use(
       try {
 
         // REFRESH ACCESS TOKEN
-        await axios.post(
+        await api.post(
 
-          "https://saas-pos-backend-m8et.onrender.com/auth/refresh",
+          "/auth/refresh",
 
           {},
 
           {
-            withCredentials: true,
-
             headers: {
               "X-Tenant-ID":
                 localStorage.getItem(
@@ -75,11 +73,16 @@ api.interceptors.response.use(
 
       } catch (refreshError) {
 
-  console.log("REFRESH FAILED");
-  console.log(refreshError);
-
-  return;
-}
+        console.error("REFRESH FAILED", refreshError);
+        console.error("Refresh response:", refreshError.response?.data);
+        
+        // Clear auth data on refresh failure
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
+        window.location.href = `/login/${localStorage.getItem("tenant") || "tenant_test"}`;
+        
+        return Promise.reject(refreshError);
+      }
     }
 
     return Promise.reject(error);
