@@ -25,27 +25,30 @@ function BillLayout({
       style={{
         width: "80mm",
         margin: "0 auto",
-        backgroundColor: "white",
-        color: "black",
+        backgroundColor: "#fff",
+        color: "#000",
         padding: "10px",
         fontFamily: "Arial, sans-serif",
-        fontSize: "12px",
-        lineHeight: "1.4"
+        fontSize: "13px",
+        fontWeight: "600",
+        lineHeight: "1.4",
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact"
       }}
     >
 
       {/* LOGO */}
-<div
-  style={{
-    textAlign: "center",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
-  }}
->
+      <div
+        style={{
+          textAlign: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
         <img
-src="/assets/logo.jpg"
+          src="/assets/logo.jpg"
           alt="logo"
           style={{
             width: "80px",
@@ -87,7 +90,14 @@ src="/assets/logo.jpg"
         }}
       >
         <span>Bill No</span>
-        <strong>{billNo}</strong>
+        <strong
+          style={{
+            color: "#000",
+            fontWeight: "900"
+          }}
+        >
+          {billNo}
+        </strong>
       </div>
 
       <div
@@ -98,7 +108,14 @@ src="/assets/logo.jpg"
         }}
       >
         <span>Date</span>
-        <strong>{getCurrentDateTime()}</strong>
+        <strong
+          style={{
+            color: "#000",
+            fontWeight: "900"
+          }}
+        >
+          {getCurrentDateTime()}
+        </strong>
       </div>
 
       <div
@@ -108,7 +125,14 @@ src="/assets/logo.jpg"
         }}
       >
         <span>Payment</span>
-        <strong>{paymentMethod}</strong>
+        <strong
+          style={{
+            color: "#000",
+            fontWeight: "900"
+          }}
+        >
+          {paymentMethod}
+        </strong>
       </div>
 
       {/* DIVIDER */}
@@ -130,7 +154,6 @@ src="/assets/logo.jpg"
 
       {/* ITEMS */}
       {
-
         cartItems.map((item, index) => (
 
           <div
@@ -147,8 +170,9 @@ src="/assets/logo.jpg"
 
               <div
                 style={{
-                  fontWeight: "600",
-                  fontSize: "12px"
+                  fontWeight: "bold",
+                  fontSize: "13px",
+                  color: "#000"
                 }}
               >
                 {item.itemname}
@@ -157,7 +181,8 @@ src="/assets/logo.jpg"
               <div
                 style={{
                   fontSize: "10px",
-                  color: "#444"
+                  color: "#000",
+                  fontWeight: "bold"
                 }}
               >
                 ₹{item.price}

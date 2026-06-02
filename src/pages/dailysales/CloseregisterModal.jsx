@@ -34,10 +34,15 @@ const [downloading, setDownloading] =
 
     try {
 
-      const res =
-        await instances.get(
-          "/salesitem/report"
-        );
+     const branchId =
+  JSON.parse(
+    localStorage.getItem("user")
+  )?.branchid;
+
+const res =
+  await instances.get(
+    `/salesitem/report?branchid=${branchId}`
+  );
 
       setReport(res.data);
 
@@ -51,8 +56,15 @@ const [downloading, setDownloading] =
 
     } catch (error) {
 
-      console.log(error);
+console.error(
+  error.response?.data
+);
 
+console.error(
+  error.response?.status
+);
+
+console.error(error);
     } finally {
 
       setLoading(false);
@@ -107,18 +119,25 @@ const handleDownloadDailySale =
       .from(element)
       .save();
 };
-
+const branchId =
+    JSON.parse(
+        localStorage.getItem("user")
+    )?.branchid;
 const handleConfirmClose = async () => {
   try {
     setDownloading(true);
 
-    await handleDownloadDailySale();
+await handleDownloadDailySale();
 
-    await instances.post(
-      "/salesitem/closeregister"
-    );
+await instances.post(
+   `/register-session/close/${branchId}`
+);
 
-    await fetchReport();
+console.log("REGISTER CLOSED");
+
+await fetchReport();
+
+console.log("NEW REPORT", report);
 
     onClose();
   } catch (error) {
