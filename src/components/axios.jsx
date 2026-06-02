@@ -50,7 +50,10 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-
+console.log(
+  "REFRESH TENANT:",
+  localStorage.getItem("tenant")
+);  
         // REFRESH ACCESS TOKEN
         await axios.post(
 
@@ -78,7 +81,7 @@ api.interceptors.response.use(
   console.log("REFRESH FAILED");
   console.log(refreshError);
 
-  return;
+  return Promise.reject(refreshError);
 }
     }
 
