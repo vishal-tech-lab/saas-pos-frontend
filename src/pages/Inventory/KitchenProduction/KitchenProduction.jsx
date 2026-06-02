@@ -166,6 +166,8 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
               boxSizing: "border-box",
               outline: "none",
               fontFamily: "'DM Sans', sans-serif",
+              color: "#0F172A",
+              background: "#FFFFFF",
             }}
             onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
             onBlur={(e) =>
@@ -289,6 +291,8 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                     boxSizing: "border-box",
                     outline: "none",
                     fontFamily: "'DM Sans', sans-serif",
+                    color: "#0F172A",
+                    background: "#FFFFFF",
                   }}
                 />
               </div>
@@ -1156,6 +1160,8 @@ useEffect(() => {
     boxSizing: "border-box",
     outline: "none",
     fontFamily: "'DM Sans', sans-serif",
+    color: "#0F172A",
+    background: "#FFFFFF",
   }}
   onFocus={(e) => {
     e.target.style.borderColor = "#7C5CFC";
@@ -1275,6 +1281,8 @@ useEffect(() => {
                         boxSizing: "border-box",
                         outline: "none",
                         fontFamily: "'DM Sans', sans-serif",
+                        color: "#0F172A",
+                        background: "#FFFFFF",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
                       onBlur={(e) =>
@@ -1320,6 +1328,8 @@ useEffect(() => {
                       boxSizing: "border-box",
                       outline: "none",
                       fontFamily: "'DM Sans', sans-serif",
+                      color: "#0F172A",
+                      background: "#FFFFFF",
                       resize: "none",
                     }}
                     onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
