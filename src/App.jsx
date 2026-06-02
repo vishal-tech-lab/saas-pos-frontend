@@ -84,7 +84,7 @@ function App() {
 <Route
             path="/inventory"
             element={
-              <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_MANAGER"]}>
+              <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CASHIER"]}>
                 <Inventory />
               </ProtectedRoute>
             }
@@ -105,7 +105,7 @@ function App() {
           <Route
             path="/finance"
             element={
-              <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_FINANCE"]}>
+              <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CASHIER"]}>
                 <Fianance />
               </ProtectedRoute>
             }
