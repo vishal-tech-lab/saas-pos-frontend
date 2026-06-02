@@ -95,7 +95,7 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
             letterSpacing: 0.3,
           }}
         >
-          Kitchen Branch{" "}
+          Branch / Warehouse{" "}
           {error && (
             <span style={{ color: "#EF4444", fontWeight: 400 }}>
               *required
@@ -261,7 +261,7 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                   marginBottom: 14,
                 }}
               >
-                Select Kitchen Branch
+                Select Branch / Warehouse
               </div>
               <div style={{ position: "relative", marginBottom: 14 }}>
                 <span
@@ -471,9 +471,9 @@ useEffect(() => {
         instances.get("/branch-stock/all"),
       ]);
       setRecords(productionRes.data || []);
-      setBranches((branchRes.data || []).filter((b) => b.branchtype === "CENTRAL_KITCHEN"));
+      setBranches(branchRes.data || []);
       setProducts(productRes.data || []);
-      setStock((stockRes.data || []).filter((s) => s.branch?.branchtype === "CENTRAL_KITCHEN"));
+      setStock(stockRes.data || []);
     } catch (error) {
       console.log(error);
       pushToast("error", "Failed to load ERP data. Please refresh.");

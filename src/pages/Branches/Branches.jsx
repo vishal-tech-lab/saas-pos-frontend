@@ -153,8 +153,7 @@ export default function Branches() {
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #C7BCFC; border-radius: 4px; }
         .branch-row:hover td { background: #7C5CFC06 !important; }
-        .action-btn { opacity: 0; transition: opacity .15s; }
-        .branch-row:hover .action-btn { opacity: 1; }
+        .action-btn { opacity: 1; transition: opacity .15s; }
         .filter-btn { transition: all .15s; }
         .filter-btn:hover { border-color: #7C5CFC !important; color: #7C5CFC !important; }
       `}</style>
