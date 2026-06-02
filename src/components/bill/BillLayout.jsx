@@ -30,7 +30,7 @@ function BillLayout({
         padding: "10px",
         fontFamily: "Arial, sans-serif",
         fontSize: "13px",
-        fontWeight: "600",
+        fontWeight: "bold",
         lineHeight: "1.4",
         WebkitPrintColorAdjust: "exact",
         printColorAdjust: "exact"
@@ -201,7 +201,7 @@ function BillLayout({
             <div
               style={{
                 textAlign: "right",
-                fontWeight: "600"
+                fontWeight: "bold"
               }}
             >
               ₹{(item.price * item.qty).toFixed(2)}
@@ -221,7 +221,7 @@ function BillLayout({
           display: "flex",
           justifyContent: "space-between",
           fontSize: "16px",
-          fontWeight: "bold",
+          fontWeight: "900",
           marginTop: "8px"
         }}
       >
