@@ -271,9 +271,20 @@ function UserModal({ editUser, onClose, onSave, branches }) {
               value={form.username}
               onChange={e => set("username", e.target.value)}
               placeholder="e.g. cashier_raj"
-              style={{ width: "100%", padding: "11px 14px", border: `1.5px solid ${errors.username ? "#EF4444" : "#E2E8F0"}`, borderRadius: 10, fontSize: 14, boxSizing: "border-box", outline: "none", fontFamily: "'DM Sans', sans-serif" }}
-              onFocus={e => e.target.style.borderColor = "#7C5CFC"}
+style={{
+  width: "100%",
+  padding: "11px 14px",
+  border: `1.5px solid ${errors.username ? "#EF4444" : "#E2E8F0"}`,
+  borderRadius: 10,
+  fontSize: 14,
+  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",     // ✅ background
+  boxSizing: "border-box",
+  outline: "none",
+  fontFamily: "'DM Sans', sans-serif"
+}}              onFocus={e => e.target.style.borderColor = "#7C5CFC"}
               onBlur={e => e.target.style.borderColor = errors.username ? "#EF4444" : "#E2E8F0"}
+              
             />
             {errors.username && <div style={{ color: "#EF4444", fontSize: 12, marginTop: 4 }}>{errors.username}</div>}
           </div>
@@ -288,7 +299,8 @@ function UserModal({ editUser, onClose, onSave, branches }) {
               value={form.password}
               onChange={e => set("password", e.target.value)}
               placeholder={editUser ? "Enter new password" : "Enter password"}
-              style={{ width: "100%", padding: "11px 14px", border: `1.5px solid ${errors.password ? "#EF4444" : "#E2E8F0"}`, borderRadius: 10, fontSize: 14, boxSizing: "border-box", outline: "none", fontFamily: "'DM Sans', sans-serif" }}
+              style={{ width: "100%", padding: "11px 14px", border: `1.5px solid ${errors.password ? "#EF4444" : "#E2E8F0"}`, borderRadius: 10, fontSize: 14, boxSizing: "border-box", outline: "none", fontFamily: "'DM Sans', sans-serif",  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",  }}
               onFocus={e => e.target.style.borderColor = "#7C5CFC"}
               onBlur={e => e.target.style.borderColor = errors.password ? "#EF4444" : "#E2E8F0"}
             />
@@ -549,7 +561,8 @@ export default function UserManagement() {
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Search users or branches…"
-                style={{ width: "100%", padding: "10px 12px 10px 36px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
+                style={{ width: "100%", padding: "10px 12px 10px 36px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif",  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",  }}
                 onFocus={e => e.target.style.borderColor = "#7C5CFC"}
                 onBlur={e => e.target.style.borderColor = "#E2E8F0"}
               />

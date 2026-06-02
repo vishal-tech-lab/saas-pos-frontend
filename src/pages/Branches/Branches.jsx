@@ -462,7 +462,8 @@ export default function Branches() {
                     value={form.branchname}
                     onChange={e => setForm({ ...form, branchname: e.target.value })}
                     placeholder="e.g. Downtown Central Kitchen"
-                    style={{ width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
+                    style={{  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",  width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
                     onFocus={e => e.target.style.borderColor = "#7C5CFC"}
                     onBlur={e => e.target.style.borderColor = "#E2E8F0"}
                   />
@@ -522,7 +523,8 @@ export default function Branches() {
                     value={form.address}
                     onChange={e => setForm({ ...form, address: e.target.value })}
                     placeholder="Full address"
-                    style={{ width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
+                    style={{  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",  width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
                     onFocus={e => e.target.style.borderColor = "#7C5CFC"}
                     onBlur={e => e.target.style.borderColor = "#E2E8F0"}
                   />
@@ -535,7 +537,8 @@ export default function Branches() {
                     value={form.phone}
                     onChange={e => setForm({ ...form, phone: e.target.value })}
                     placeholder="+1 (000) 000-0000"
-                    style={{ width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
+                    style={{  color: "#0F172A",          // ✅ text color
+  background: "#FFFFFF",  width: "100%", padding: "11px 14px", border: "1.5px solid #E2E8F0", borderRadius: 10, fontSize: 14, outline: "none", fontFamily: "'DM Sans', sans-serif" }}
                     onFocus={e => e.target.style.borderColor = "#7C5CFC"}
                     onBlur={e => e.target.style.borderColor = "#E2E8F0"}
                   />

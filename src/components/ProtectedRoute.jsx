@@ -1,8 +1,5 @@
 import React from "react";
-
-import {
-  Navigate
-} from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({
   children,
@@ -24,15 +21,14 @@ function ProtectedRoute({
 
     return (
       <Navigate
-        to={`/login/${
-          tenant || "tenant_test"
-        }`}
+        to={`/login/${tenant || "tenant_test"}`}
         replace
       />
     );
   }
 
-  // ❌ NOT APPROVED
+  // ✅ TEMPORARILY DISABLED
+  /*
   if (
     user.status !== "APPROVED"
   ) {
@@ -44,52 +40,39 @@ function ProtectedRoute({
         <div className="bg-white p-8 rounded-xl shadow text-center">
 
           <h2 className="text-xl font-bold text-red-500 mb-2">
-
             Waiting for Approval
-
           </h2>
 
           <p className="text-gray-600 mb-4">
-
             Your account is not approved yet.
-
           </p>
 
           <button
-
             onClick={() => {
 
-              localStorage.removeItem(
-                "user"
-              );
+              localStorage.removeItem("user");
 
               window.location.href =
-                `/login/${
-                  tenant || "tenant_test"
-                }`;
+                `/login/${tenant || "tenant_test"}`;
             }}
-
             className="px-4 py-2 bg-red-500 text-white rounded-lg"
           >
-
             Logout
-
           </button>
 
         </div>
+
       </div>
     );
   }
+  */
 
   // ❌ ROLE NOT ALLOWED
   if (
-
     allowedRoles &&
-
     !allowedRoles.includes(
       user.role
     )
-
   ) {
 
     return (
