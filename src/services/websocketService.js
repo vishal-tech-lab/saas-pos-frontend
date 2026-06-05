@@ -4,7 +4,7 @@ import SockJS from "sockjs-client/dist/sockjs";
 let stompClient = null;
 
 export const connectWebSocket = (branchId, onMessageReceived) => {
-  const socket = new SockJS("http://localhost:8080/ws");
+  const socket = new SockJS("https://saas-pos-backend-m8et.onrender.com/ws");
 
   stompClient = new Client({
     webSocketFactory: () => socket,

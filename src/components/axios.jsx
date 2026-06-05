@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
 
   baseURL:
-    "http://localhost:8080",
+    "https://saas-pos-backend-m8et.onrender.com",
 
   withCredentials: true
 });
@@ -57,7 +57,7 @@ console.log(
         // REFRESH ACCESS TOKEN
         await axios.post(
 
-          "http://localhost:8080/auth/refresh",
+          "https://saas-pos-backend-m8et.onrender.com/auth/refresh",
 
           {},
 
