@@ -227,9 +227,12 @@ function Auth() {
       if (tenantId) {
         localStorage.setItem("tenant", tenantId);
       }
+localStorage.setItem("user", JSON.stringify(data));
 
-      localStorage.setItem("user", JSON.stringify(data));
-      localStorage.setItem("currentUser", data.username || data.email || "");
+const user =
+ JSON.parse(localStorage.getItem("user"));
+
+console.log(user);      localStorage.setItem("currentUser", data.username || data.email || "");
       localStorage.setItem("role", data.role || "");
       localStorage.setItem("currentBranch", data.branchName || data.branch || data.branchname || "");
 

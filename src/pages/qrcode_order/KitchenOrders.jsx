@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChefHat,
@@ -286,6 +287,11 @@ const OrderCard = ({ order, index, onStatusUpdate, updatingId }) => {
 // ─── Main Component ────────────────────────────────────────────────────────────
 
 export default function KitchenOrders() {
+  const { tenant, branchId } = useParams();
+
+  console.log("Tenant:", tenant);
+  console.log("Branch:", branchId);
+
   const [orders, setOrders] = useState([]);
   const [fetching, setFetching] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -308,7 +314,7 @@ export default function KitchenOrders() {
     if (!silent) setFetching(true);
     else setRefreshing(true);
     try {
-      const { data } = await api.get("/kitchen/orders");
+      const { data } = await api.get(`/kitchen/orders?branchId=${branchId}`);
       setOrders(Array.isArray(data) ? data : data.data || []);
       setLastRefresh(new Date());
     } catch {

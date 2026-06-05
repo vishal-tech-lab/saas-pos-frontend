@@ -417,33 +417,42 @@ export default function TableMaster() {
   }, [fetchTables]);
 
   // ── CRUD ──────────────────────────────────────────────────────────────────
-  const handleCreate = async (form) => {
-    setActionLoading(true);
-    try {
-        console.log(
-  "BRANCH ID:",
-  localStorage.getItem("branchid")
-);
-      const branchid = Number(
-        localStorage.getItem("branchid")
-      );
-      if (!branchid) {
-        addToast("Branch not found", "error");
-        return;
-      }
-      await axios.post("/table/register", {
-        ...form,
-        branchid,
-      });
-      addToast("Table Created Successfully");
-      setModal(null);
-      fetchTables();
-    } catch {
-      addToast("Failed to create table", "error");
-    } finally {
-      setActionLoading(false);
+ const handleCreate = async (form) => {
+  setActionLoading(true);
+
+  try {
+
+    const user = JSON.parse(
+      localStorage.getItem("user")
+    );
+
+    const branchid = user?.branchId;
+
+    console.log(
+      "BRANCH ID:",
+      branchid
+    );
+
+    if (!branchid) {
+      addToast("Branch not found", "error");
+      return;
     }
-  };
+
+    await axios.post("/table/register", {
+      ...form,
+      branchid,
+    });
+
+    addToast("Table Created Successfully");
+    setModal(null);
+    fetchTables();
+
+  } catch {
+    addToast("Failed to create table", "error");
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   const handleUpdate = async (form) => {
     setActionLoading(true);

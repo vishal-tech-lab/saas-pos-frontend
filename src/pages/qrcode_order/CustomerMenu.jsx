@@ -67,10 +67,15 @@ export default function CustomerMenu() {
   const cartRef = useRef(null);
 
   // Table / restaurant info from URL params or localStorage
-  const tableNo    = new URLSearchParams(window.location.search).get("table") || "5";
-  const branchName = localStorage.getItem("currentBranch") || "MasalaRoast";
+const tableNo = tableId;
+const branchName =
+  tenant
+    ?.replace("tenant_", "")
+    ?.replaceAll("_", " ");
 
-  useEffect(() => { fetchData(); }, []);
+useEffect(() => {
+  fetchData();
+}, []);
 
   const fetchData = async () => {
     try {

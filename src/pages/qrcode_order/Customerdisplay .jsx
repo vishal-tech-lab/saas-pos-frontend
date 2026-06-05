@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   QrCode,
@@ -537,9 +538,10 @@ export default function CustomerDisplay() {
 
   const prevStatusRef = useRef(null);
   const thankYouTimerRef = useRef(null);
+  const { tenant, branchId } = useParams();
 
-  const branchId = localStorage.getItem("branchid") || localStorage.getItem("branchId");
-
+  console.log("Tenant:", tenant);
+  console.log("Branch:", branchId);
   const fetchDisplay = useCallback(
     async (silent = false) => {
       if (!silent) setLoading(true);

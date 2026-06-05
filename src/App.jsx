@@ -92,13 +92,15 @@ function App() {
 />
 
 <Route
-  path="/sales/display"
+  path="/display/:tenant/:branchId"
   element={<CustomerDisplay />}
 />
 
 
-<Route path="/kitchen" element={<KitchenOrders />} />
-          {/* STOCK */}
+<Route
+  path="/kitchen/:tenant/:branchId"
+  element={<KitchenOrders />}
+/>                {/* STOCK */}
          
 {/* INVENTORY */}
 <Route
