@@ -142,10 +142,10 @@ function Auth() {
       setTimeout(() => setLoginMsg({ text: "", type: "" }), 3000);
     }
   };
-
+const pageClass = `${styles.authPage}${isLoaded ? " loaded" : ""}`;
   return (
-    <div className={`${styles.authPage} ${isLoaded ? styles.loaded : ""}`}>
-      <div className={styles.authBg}></div>
+<div className={pageClass}>
+        <div className={styles.authBg}></div>
       <div className={styles.authOverlay}></div>
 
       <div className={styles.authWrapper}>
