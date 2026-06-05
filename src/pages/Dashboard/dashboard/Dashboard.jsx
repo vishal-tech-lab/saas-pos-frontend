@@ -15,6 +15,11 @@ import SalesRegisterPlus from "../../POS/Sales";
 import Expense from "../../Expenses/Expense";
 import Profile from "../../profile/Profile";
 import StockTransfer from "../../Inventory/Stocktransfer/Stocktransfer";
+import CustomerMenu from "../../qrcode_order/CustomerMenu";
+import TableMaster from "../../qrcode_order/TableMaster";
+import KitchenOrders from "../../qrcode_order/KitchenOrders";
+import Customerodertracking from "../../qrcode_order/Customerodertracking";
+import Customerdisplay from "../../qrcode_order/Customerdisplay ";
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend, Filler);
 
 // ─── CSS ──────────────────────────────────────────────────────────────────────
@@ -443,6 +448,12 @@ const NAV_ITEMS = [
   { section: null,      icon: "ti-users",             label: "Staff",     page: "staff" },
   { section: null,      icon: "ti-building-store",    label: "Branches",  page: "branches" },
   { section: "Insights",      icon: "ti-wallet",            label: "Expenses",  page: "expenses" },
+  { section: "Insights",      icon: "ti-wallet",       label: "customer",  page: "customer" },
+    { section: "Insights",      icon: "ti-wallet",       label: "table",  page: "table" },
+ { section: "Insights",      icon: "ti-wallet",       label: "qkitchen",  page: "qkitchen" },
+ { section: "Insights",      icon: "ti-wallet",       label: "customerdis",  page: "customerdis" },
+
+
 ];
 
 function Sidebar({ collapsed, onToggle, onNav, activePage }) {
@@ -845,8 +856,18 @@ export default function Dashboard() {
 
   const renderPage = () => {
     switch (activePage) {
+      case "qkitchen":
+        return <KitchenOrders />;
+        case "customerdis":
+          return <Customerdisplay />;
+         case "qtracking":
+       return <Customerodertracking />;
       case "pos":
         return <SalesRegisterPlus />;
+        case "customer":
+        return <CustomerMenu />;
+        case "table":
+          return <TableMaster />;
     case "inventory":
   return <Inventory navigate={handleNav} />;
 

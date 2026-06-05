@@ -41,6 +41,10 @@ import Inventory from "./pages/Inventory/Inventory";
 import Product from "./pages/Product/Product";
 import TenantLogin from "./components/TenantLogin";
 import StockTransfer from "./pages/Inventory/Stocktransfer/Stocktransfer";
+import CustomerMenu from "./pages/qrcode_order/CustomerMenu";
+import Customerodertracking from "./pages/qrcode_order/Customerodertracking";
+import CustomerDisplay from "./pages/qrcode_order/Customerdisplay ";
+import KitchenOrders from "./pages/qrcode_order/KitchenOrders";
 
 // Wrapper
 const PageWrapper = ({ children }) => {
@@ -78,6 +82,22 @@ function App() {
   element={<TenantLogin />}
 />
 
+<Route
+  path="/order/:tenant/table/:tableId"
+  element={<CustomerMenu />}
+/>
+<Route
+  path="/order-status/:orderId"
+  element={<Customerodertracking />}
+/>
+
+<Route
+  path="/sales/display"
+  element={<CustomerDisplay />}
+/>
+
+
+<Route path="/kitchen" element={<KitchenOrders />} />
           {/* STOCK */}
          
 {/* INVENTORY */}

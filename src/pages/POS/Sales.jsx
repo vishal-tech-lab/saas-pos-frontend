@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getProducts, getCategories } from "../../services/Productservice";
 import { createSale, closeRegister as closeRegisterAPI, getSalesReport } from "../../services/SalesService";
+import { updateCustomerDisplay, clearCustomerDisplay } from "../../services/customerDisplayService";
 import CloseregisterModal from "../dailysales/CloseregisterModal";
 import BillPreviewModal from "../../components/bill/BillPreviewModal";
 import BillLayout from "../../components/bill/BillLayout";
@@ -97,10 +98,12 @@ export default function Sales() {
   const [payMode, setPayMode]         = useState("cash");
   const [showBillPreview, setShowBillPreview] = useState(false);
   const [billData, setBillData] = useState(null);
+  const [draftBillNo, setDraftBillNo] = useState("");
   const [showCloseModal, setShowCloseModal] = useState(false);
   const [report, setReport] = useState(null);
   const [loading, setLoading]         = useState(true);
   const [submitting, setSubmitting]   = useState(false);
+  const branchId = localStorage.getItem("branchid") || localStorage.getItem("branchId");
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -159,16 +162,20 @@ export default function Sales() {
     const pid = item.id || item.itemid;
     const pname = item.productname || item.itemname;
     const pprice = item.price;
+    const billNo = draftBillNo || "BILL-" + Date.now();
+
+    if (!draftBillNo) {
+      setDraftBillNo(billNo);
+    }
+
     setCart((prev) => {
       const ex = prev.find((c) => c.itemid === pid);
-      if (ex) return prev.map((c) => c.itemid === pid ? { ...c, qty: c.qty + 1 } : c);
-      const cartItem = {
-        itemid: pid,
-        itemname: pname,
-        price: pprice,
-        qty: 1,
-      };
-      return [...prev, cartItem];
+      const next = ex
+        ? prev.map((c) => c.itemid === pid ? { ...c, qty: c.qty + 1 } : c)
+        : [...prev, { itemid: pid, itemname: pname, price: pprice, qty: 1 }];
+
+      pushToCustomerDisplay(next, billNo);
+      return next;
     });
     setSelectedCartId(pid);
     setQtyInput("");
@@ -181,18 +188,43 @@ export default function Sales() {
   };
 
   // Set qty directly for selected item
-  const setQty = (id, qty) => setCart((p) => p.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, qty) } : c));
-  const updateQty  = (id, d) => setCart((p) => p.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, c.qty + d) } : c));
-  const removeItem = (id) => {
-    setCart((p) => {
-      const next = p.filter((c) => c.itemid !== id);
-      if (selectedCartId === id && next.length > 0) setSelectedCartId(next[0].itemid);
-      else if (next.length === 0) setSelectedCartId(null);
-      return next;
-    });
-    setQtyInput("");
+  const setQty = (id, qty) => {
+    const next = cart.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, qty) } : c);
+    setCart(next);
+    pushToCustomerDisplay(next, draftBillNo);
   };
-  const clearCart = () => { setCart([]); setSelectedCartId(null); setQtyInput(""); };
+
+  const updateQty  = (id, d) => {
+    const next = cart.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, c.qty + d) } : c);
+    setCart(next);
+    pushToCustomerDisplay(next, draftBillNo);
+  };
+
+  const removeItem = (id) => {
+    const next = cart.filter((c) => c.itemid !== id);
+    setCart(next);
+    if (selectedCartId === id && next.length > 0) setSelectedCartId(next[0].itemid);
+    else if (next.length === 0) setSelectedCartId(null);
+    setQtyInput("");
+    pushToCustomerDisplay(next, draftBillNo);
+  };
+
+  const clearCart = () => {
+    setCart([]);
+    setSelectedCartId(null);
+    setQtyInput("");
+   if (branchId) {
+
+    updateCustomerDisplay({
+        branchid: branchId,
+        billno: null,
+        total: 0,
+        status: "WAITING",
+        items: []
+    });
+
+}
+  };
 
   // Keypad handler — digits build qty buffer, ⌫ deletes, +/- toggles
   const handleKey = (k) => {
@@ -232,7 +264,6 @@ const user =
     return;
 
   }
-
   setSubmitting(true);
 
   try {
@@ -251,8 +282,10 @@ const user =
       return;
     }
 
-    const billNo =
-      "BILL-" + Date.now();
+    const billNo = draftBillNo || "BILL-" + Date.now();
+    if (!draftBillNo) {
+      setDraftBillNo(billNo);
+    }
 
     for (const item of cart) {
 
@@ -276,6 +309,7 @@ const user =
       });
 
     }
+await clearCustomerDisplay(branchId);
 
     setBillData({
       billNo,
@@ -340,6 +374,55 @@ const user =
   const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
   const discount = 0;
   const total    = subtotal - discount;
+
+ const pushToCustomerDisplay = async (
+  cartItems,
+  billNo
+) => {
+
+  if (!branchId) {
+    return;
+  }
+
+if (cartItems.length === 0) {
+
+    await updateCustomerDisplay({
+
+      branchid: branchId,
+      billno: null,
+      total: 0,
+      status: "WAITING",
+      items: []
+
+    });
+
+    return;
+}
+
+  const grandTotal =
+    cartItems.reduce(
+      (sum, item) =>
+        sum + item.price * item.qty,
+      0
+    );
+
+  const payload = {
+    branchid: branchId,
+    billno: billNo,
+    total: grandTotal,
+    status: "ACTIVE",
+    items: cartItems.map(item => ({
+      itemname: item.itemname,
+      qty: item.qty,
+      price: item.price,
+      total: item.price * item.qty
+    }))
+  };
+
+  await updateCustomerDisplay(
+    payload
+  );
+};
 
   const timeStr = time.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
