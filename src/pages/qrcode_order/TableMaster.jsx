@@ -426,7 +426,8 @@ export default function TableMaster() {
       localStorage.getItem("user")
     );
 
-    const branchid = user?.branchId;
+    const branchid =
+      user?.branchId || user?.branchid;
 
     console.log(
       "BRANCH ID:",
