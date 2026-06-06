@@ -391,6 +391,36 @@ export default function Branches() {
                               <Edit3 style={{ width: 13, height: 13 }} /> Edit
                             </button>
                             <button
+                              onClick={() => {
+                                const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
+                                if (!tenant) return;
+                                window.open(`/kitchen/${tenant}/${b.branchid}`, "_blank");
+                              }}
+                              style={{
+                                padding: "7px 12px", borderRadius: 8,
+                                border: "1.5px solid #FEF3C7", background: "#FFFBEB",
+                                color: "#D97706", fontSize: 12, fontWeight: 600,
+                                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                              }}
+                            >
+                              🍳 Kitchen
+                            </button>
+                            <button
+                              onClick={() => {
+                                const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
+                                if (!tenant) return;
+                                window.open(`/display/${tenant}/${b.branchid}`, "_blank");
+                              }}
+                              style={{
+                                padding: "7px 12px", borderRadius: 8,
+                                border: "1.5px solid #DBEAFE", background: "#EFF6FF",
+                                color: "#2563EB", fontSize: 12, fontWeight: 600,
+                                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                              }}
+                            >
+                              📺 Display
+                            </button>
+                            <button
                               onClick={() => setDeleteConfirm(b)}
                               style={{
                                 padding: "7px 12px", borderRadius: 8,
