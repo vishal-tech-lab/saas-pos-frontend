@@ -74,12 +74,14 @@ function App() {
 
         <Routes>
           {/* LOGIN */}
-          <Route path="/login/:tenantId" element={<Auth />} />
-
+<Route
+ path="/"
+ element={<Auth />}
+/>
           {/* HOME */}
-          <Route
-  path="/"
-  element={<TenantLogin />}
+       <Route
+ path="/"
+ element={<Auth />}
 />
 
 <Route

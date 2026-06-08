@@ -15,7 +15,7 @@ api.interceptors.request.use(
   (config) => {
 
     const tenant =
-      localStorage.getItem(
+      localStorage.getItem( 
         "tenant"
       );
 
