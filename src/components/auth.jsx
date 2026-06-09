@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Auth.module.css";
 import api from "./axios"
-
+import { loadTenant }
+from "../services/tenantService";
 // ─── Icons ───────────────────────────────────────────────────────────────────
 
 function EyeIcon({ className }) {
@@ -169,7 +170,6 @@ function useFlashMessage() {
 
 function Auth() {
   const navigate = useNavigate();
-  const { tenantId } = useParams();
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -186,23 +186,32 @@ function Auth() {
   }, []);
 
   useEffect(() => {
+    const hostname = window.location.hostname;
+    const parts = hostname.split(".");
+
+    if (parts.length > 2) {
+      const subdomain = parts[0];
+      localStorage.setItem("tenant", subdomain);
+      console.log("Tenant:", subdomain);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadTenant().then((data) => {
+      if (data) {
+        localStorage.setItem("tenantInfo", JSON.stringify(data));
+        localStorage.setItem("plan", data.plan);
+        localStorage.setItem("subscriptionStatus", data.subscriptionStatus);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     setShowPassword(false);
   }, [isSignup]);
 
-  // Check if we're in Tenant Owner mode (no tenantId in URL)
-  const isTenantOwnerMode = !tenantId;
-
   const handleLogin = async (e) => {
     e.preventDefault();
-
-  if (tenantId) {
-
-    localStorage.setItem(
-      "tenant",
-      tenantId
-    );
-
-  }
     setLoading(true);
 
     try {
@@ -211,46 +220,21 @@ function Auth() {
         password,
       });
 
-      // STEP 1: Tenant Owner Login (no tenantId in URL)
-      if (isTenantOwnerMode && data.role === "TENANT_OWNER") {
-        localStorage.setItem("tenant", data.tenantId);
-        localStorage.setItem("user", JSON.stringify(data));
-        flashAuth("Login successful. Redirecting...", "success");
+      localStorage.setItem("user", JSON.stringify(data));
+      localStorage.setItem("role", data.role);
 
-        setTimeout(() => {
-          navigate(`/login/${data.tenantId}`, { replace: true });
-        }, 700);
-        return;
+      if (data.role === "ROLE_ADMIN" || data.role === "ROLE_MANAGER") {
+        navigate("/dashboard");
+      } else if (data.role === "ROLE_CASHIER") {
+        navigate("/pos");
+      } else if (data.role === "ROLE_KITCHEN") {
+        navigate("/kitchen");
       }
-
-      // STEP 2: Regular user login (with tenantId in URL)
-      if (tenantId) {
-        localStorage.setItem("tenant", tenantId);
-      }
-localStorage.setItem("user", JSON.stringify(data));
-
-const user =
- JSON.parse(localStorage.getItem("user"));
-
-console.log(user);      localStorage.setItem("currentUser", data.username || data.email || "");
-      localStorage.setItem("role", data.role || "");
-      localStorage.setItem("currentBranch", data.branchName || data.branch || data.branchname || "");
-
-      flashAuth("Login successful. Redirecting...", "success");
-
-      setTimeout(() => {
-        if (data.role === "ROLE_ADMIN" || data.role === "ROLE_MANAGER") {
-          navigate("/dashboard", { replace: true });
-        } else if (data.role === "ROLE_CASHIER") {
-          navigate("/pos", { replace: true });
-        } else if (data.role === "ROLE_KITCHEN") {
-          navigate("/kitchen", { replace: true });
-        } else {
-          navigate("/", { replace: true });
-        }
-      }, 700);
     } catch (err) {
-      flashAuth(err?.response?.data?.message || "Sign in failed.", "error");
+      flashAuth(
+        err.response?.data?.message || "Login Failed",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -261,10 +245,6 @@ console.log(user);      localStorage.setItem("currentUser", data.username || dat
     setLoading(true);
 
     try {
-      if (tenantId) {
-        localStorage.setItem("tenant", tenantId);
-      }
-
       await api.post("/auth/signup", {
         username: email,
         password,
@@ -285,27 +265,16 @@ console.log(user);      localStorage.setItem("currentUser", data.username || dat
     ? "Already have an account?"
     : "Don’t have an account?";
   const switchAction = isSignup ? "Sign In" : "Sign Up";
-  // Determine title and labels based on mode
-  let displayTitle, displaySubmitLabel, displaySwitchLabel, displaySwitchAction, displayWelcomeText;
-  if (isTenantOwnerMode) {
-    displayTitle = "Tenant Owner Login";
-    displaySubmitLabel = "Login";
-    displaySwitchLabel = "";
-    displaySwitchAction = "";
-    displayWelcomeText = "Welcome to MasalaRoast";
-  } else {
-    displayTitle = isSignup ? "Sign Up" : "Sign In";
-    displaySubmitLabel = isSignup ? "Create Account" : "Sign In";
-    displaySwitchLabel = isSignup
-      ? "Already have an account?"
-      : "Don't have an account?";
-    displaySwitchAction = isSignup ? "Sign In" : "Sign Up";
-    displayWelcomeText = isSignup
-      ? "Create your admin account for your tenant."
-      : "Login to continue managing your dashboard.";
-  }
-  const pageClass =
-  `${styles.authPage}${isLoaded ? " loaded" : ""}`;
+  const displayTitle = isSignup ? "Sign Up" : "Sign In";
+  const displaySubmitLabel = isSignup ? "Create Account" : "Sign In";
+  const displaySwitchLabel = isSignup
+    ? "Already have an account?"
+    : "Don't have an account?";
+  const displaySwitchAction = isSignup ? "Sign In" : "Sign Up";
+  const displayWelcomeText = isSignup
+    ? "Create your admin account for your tenant."
+    : "Login to continue managing your dashboard.";
+  const pageClass = `${styles.authPage}${isLoaded ? " loaded" : ""}`;
   return (
 <div className={pageClass}>
         <div className={styles.authBg}></div>
@@ -351,23 +320,20 @@ console.log(user);      localStorage.setItem("currentUser", data.username || dat
             </div>
           </form>
 
-          {/* Only show switch link when NOT in Tenant Owner mode */}
-          {!isTenantOwnerMode && (
-            <div className={`${styles.switchLink} ${styles.slideElement}`}>
-              <p>
-                {displaySwitchLabel}{" "}
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsSignup((prev) => !prev);
-                  }}
-                >
-                  {displaySwitchAction}
-                </a>
-              </p>
-            </div>
-          )}
+          <div className={`${styles.switchLink} ${styles.slideElement}`}>
+            <p>
+              {displaySwitchLabel}{" "}
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsSignup((prev) => !prev);
+                }}
+              >
+                {displaySwitchAction}
+              </a>
+            </p>
+          </div>
         </div>
 
         <div className={`${styles.welcomeSection} ${styles.signin}`}>

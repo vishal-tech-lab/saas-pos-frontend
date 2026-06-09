@@ -39,7 +39,6 @@ import BranchStock from "./pages/Inventory/Branch/BranchStock";
 import Auth from "./components/auth";
 import Inventory from "./pages/Inventory/Inventory";
 import Product from "./pages/Product/Product";
-import TenantLogin from "./components/TenantLogin";
 import StockTransfer from "./pages/Inventory/Stocktransfer/Stocktransfer";
 import CustomerMenu from "./pages/qrcode_order/CustomerMenu";
 import Customerodertracking from "./pages/qrcode_order/Customerodertracking";
@@ -74,10 +73,7 @@ function App() {
 
         <Routes>
           {/* LOGIN */}
-<Route
- path="/"
- element={<Auth />}
-/>
+
           {/* HOME */}
        <Route
  path="/"

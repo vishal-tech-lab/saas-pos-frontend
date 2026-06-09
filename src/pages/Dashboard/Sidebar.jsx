@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { FEATURES } from "../../utils/features";
 
 import {
   BarChart3,
@@ -22,6 +23,11 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
   const location = useLocation();
 
   const [openMenu, setOpenMenu] = useState(null);
+
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const features = FEATURES[user.plan] || [];
+
+  const hasFeature = (feature) => features.includes(feature);
 
   const menuItems = [
     {
@@ -118,6 +124,42 @@ function Sidebar({ isCollapsed, setIsCollapsed }) {
           path: "/fianance/expenseedit",
         },
       ],
+    },
+
+    {
+      path: "/dashboard/customer",
+      name: "Customer",
+      icon: <Users className="w-5 h-5" />,
+      color: "from-cyan-500 to-blue-500",
+      description: "QR Order Management",
+      feature: "QR_ORDER",
+    },
+
+    {
+      path: "/dashboard/table",
+      name: "Table",
+      icon: <Package className="w-5 h-5" />,
+      color: "from-violet-500 to-purple-500",
+      description: "Table Master",
+      feature: "TABLE_MASTER",
+    },
+
+    {
+      path: "/dashboard/qkitchen",
+      name: "Kitchen",
+      icon: <ShoppingCart className="w-5 h-5" />,
+      color: "from-amber-500 to-orange-500",
+      description: "Kitchen Display",
+      feature: "KITCHEN_DISPLAY",
+    },
+
+    {
+      path: "/dashboard/customerdis",
+      name: "Customer Display",
+      icon: <FileText className="w-5 h-5" />,
+      color: "from-rose-500 to-pink-500",
+      description: "Customer Display",
+      feature: "CUSTOMER_DISPLAY",
     },
 
     {

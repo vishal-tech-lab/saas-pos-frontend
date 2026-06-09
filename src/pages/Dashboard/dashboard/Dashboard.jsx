@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FEATURES } from "../../../utils/features";
 import {
   Chart as ChartJS, CategoryScale, LinearScale, BarElement,
   LineElement, PointElement, ArcElement, Tooltip, Legend, Filler,
@@ -442,22 +443,22 @@ function Clock() {
 // ── Sidebar ───────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
   { section: null,      icon: "ti-layout-dashboard", label: "Dashboard", page: "dashboard" },
-  { section: null,      icon: "ti-receipt",           label: "POS",       page: "pos",      badge: "Live" },
-  { section: "Manage",  icon: "ti-package",           label: "Inventory", page: "inventory",       badge: "12" },
-  { section: null,      icon: "ti-tools-kitchen-2",   label: "Products",  page: "products" },
-  { section: null,      icon: "ti-users",             label: "Staff",     page: "staff" },
-  { section: null,      icon: "ti-building-store",    label: "Branches",  page: "branches" },
+  { section: null,      icon: "ti-receipt",           label: "POS",       page: "pos",      badge: "Live", feature: "POS" },
+  { section: "Manage",  icon: "ti-package",           label: "Inventory", page: "inventory",       badge: "12", feature: "INVENTORY" },
+  { section: null,      icon: "ti-tools-kitchen-2",   label: "Products",  page: "products", feature: "PRODUCTS" },
+  { section: null,      icon: "ti-users",             label: "Staff",     page: "staff", feature: "STAFF" },
+  { section: null,      icon: "ti-building-store",    label: "Branches",  page: "branches", feature: "BRANCHES" },
   { section: "Insights",      icon: "ti-wallet",            label: "Expenses",  page: "expenses" },
-  { section: "Insights",      icon: "ti-wallet",       label: "customer",  page: "customer" },
-    { section: "Insights",      icon: "ti-wallet",       label: "table",  page: "table" },
- { section: "Insights",      icon: "ti-wallet",       label: "qkitchen",  page: "qkitchen" },
- { section: "Insights",      icon: "ti-wallet",       label: "customerdis",  page: "customerdis" },
-
-
+  { section: "Insights",      icon: "ti-wallet",       label: "Customer",  page: "customer", feature: "QR_ORDER" },
+  { section: "Insights",      icon: "ti-wallet",       label: "Table",  page: "table", feature: "TABLE_MASTER" },
+  { section: "Insights",      icon: "ti-wallet",       label: "Kitchen",  page: "qkitchen", feature: "KITCHEN_DISPLAY" },
+  { section: "Insights",      icon: "ti-wallet",       label: "Customer Display",  page: "customerdis", feature: "CUSTOMER_DISPLAY" },
 ];
 
 function Sidebar({ collapsed, onToggle, onNav, activePage }) {
-    const user = JSON.parse(localStorage.getItem("user")) || {};  // ← add this
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const features = FEATURES[user.plan] || [];
+  const hasFeature = (feature) => !feature || features.includes(feature);
 
   let lastSection = null;
   return (
@@ -481,7 +482,9 @@ function Sidebar({ collapsed, onToggle, onNav, activePage }) {
 
       {/* ── Nav items ── */}
       <nav className="sb-nav">
-        {NAV_ITEMS.map((item, i) => {
+        {NAV_ITEMS
+          .filter(item => hasFeature(item.feature))
+          .map((item, i) => {
           const showSection = item.section && item.section !== lastSection;
           if (item.section) lastSection = item.section;
           return (
@@ -857,18 +860,35 @@ export default function Dashboard() {
   const renderPage = () => {
     switch (activePage) {
       case "qkitchen":
-        return <KitchenOrders />;
-        case "customerdis":
-          return <Customerdisplay />;
-         case "qtracking":
-       return <Customerodertracking />;
-      case "pos":
+        
+return (
+    <FeatureGuard feature="KITCHEN_DISPLAY">
+      <KitchenOrders />
+    </FeatureGuard>
+  );        case "customerdis":
+ return (
+    <FeatureGuard feature="CUSTOMER_DISPLAY">
+      <Customerdisplay />
+    </FeatureGuard>
+  );         case "qtracking":
+return (
+    <FeatureGuard feature="QR_ORDER">
+      <CustomerMenu />
+    </FeatureGuard>
+  );      case "pos":
         return <SalesRegisterPlus />;
-        case "customer":
-        return <CustomerMenu />;
+       case "customer":
+  return (
+    <FeatureGuard feature="QR_ORDER">
+      <CustomerMenu />
+    </FeatureGuard>
+  );
         case "table":
-          return <TableMaster />;
-    case "inventory":
+ return (
+    <FeatureGuard feature="TABLE_MASTER">
+      <TableMaster />
+    </FeatureGuard>
+  );    case "inventory":
   return <Inventory navigate={handleNav} />;
 
 case "branchstock":
