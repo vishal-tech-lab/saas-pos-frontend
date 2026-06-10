@@ -44,7 +44,7 @@ import CustomerMenu from "./pages/qrcode_order/CustomerMenu";
 import Customerodertracking from "./pages/qrcode_order/Customerodertracking";
 import CustomerDisplay from "./pages/qrcode_order/Customerdisplay ";
 import KitchenOrders from "./pages/qrcode_order/KitchenOrders";
-
+import TenantCreation from "./pages/SuperAdmin/TenantCreation";
 // Wrapper
 const PageWrapper = ({ children }) => {
   const location = useLocation();
@@ -79,7 +79,11 @@ function App() {
  path="/"
  element={<Auth />}
 />
-
+<Route
+  path="/superadmin/create-tenant"
+  element={<TenantCreation />}
+/>
+          {/* QR CODE ORDER */}
 <Route
   path="/order/:tenant/table/:tableId"
   element={<CustomerMenu />}
