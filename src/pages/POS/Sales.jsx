@@ -521,6 +521,15 @@ if (cartItems.length === 0) {
       background: "#FAFAFA",
       flexShrink: 0,
     },
+    paymentSection: {
+      padding: "14px",
+      margin: "0 14px 10px",
+      borderRadius: 16,
+      background: "#FFFFFF",
+      border: "1px solid #E5E3EE",
+      boxShadow: "0 1px 2px rgba(15, 23, 42, 0.04)",
+      flexShrink: 0,
+    },
     actionRow: {
       padding: "7px 14px",
       display: "flex", gap: 6,
@@ -700,33 +709,33 @@ if (cartItems.length === 0) {
           </div>
 
           {/* Payment Mode */}
-          <div style={{ padding:"0 14px 10px", flexShrink:0 }}>
-            <div style={{ fontSize:11, fontWeight:600, color:"#6B7280", marginBottom:5, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
-            <div style={{ display:"flex", gap:6, marginBottom:7 }}>
+          <div style={S.paymentSection}>
+            <div style={{ fontSize:11, fontWeight:600, color:"#6B7280", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
+            <div style={{ display:"flex", gap:6, marginBottom:10 }}>
               {[
                 { key:"cash", label:"Cash", icon:"💵" },
                 { key:"upi",  label:"UPI",  icon:"📱" },
                 { key:"card", label:"Card", icon:"💳" },
               ].map(({ key, label, icon }) => (
                 <button key={key} onClick={() => setPayMode(key)} style={{
-                  flex:1, padding:"6px 0",
-                  borderRadius:8,
+                  flex:1, padding:"10px 0",
+                  borderRadius:12,
                   border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
                   background: payMode === key ? "#EDE9FF" : "#fff",
                   color: payMode === key ? "#7C5CFC" : "#374151",
                   fontWeight: payMode === key ? 700 : 500,
-                  fontSize:12, cursor:"pointer",
-                  display:"flex", alignItems:"center", justifyContent:"center", gap:5,
+                  fontSize:13, cursor:"pointer",
+                  display:"flex", alignItems:"center", justifyContent:"center", gap:8,
                 }}>
-                  <span style={{ fontSize:15 }}>{icon}</span>
+                  <span style={{ fontSize:16 }}>{icon}</span>
                   {label}
                 </button>
               ))}
             </div>
             <button onClick={handleConfirmOrder} disabled={submitting || cart.length === 0} style={{
               width:"100%", background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC", color:"#fff",
-              border:"none", borderRadius:9, padding:"10px 0",
-              fontSize:13.5, fontWeight:700, cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
+              border:"none", borderRadius:12, padding:"12px 0",
+              fontSize:14, fontWeight:700, cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
             }}>
               {submitting ? "🔄 Confirming..." : "✅ Confirm Order"}
             </button>
