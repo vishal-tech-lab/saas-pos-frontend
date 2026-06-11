@@ -104,6 +104,7 @@ export default function Sales() {
   const [loading, setLoading]         = useState(true);
   const [submitting, setSubmitting]   = useState(false);
   const branchId = localStorage.getItem("branchid") || localStorage.getItem("branchId");
+  const isTablet = typeof window !== "undefined" && window.innerWidth <= 1024;
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -483,7 +484,7 @@ if (cartItems.length === 0) {
     main: { display: "flex", flex: 1, overflow: "hidden" },
     /* LEFT PANEL */
     left: {
-      width: 340, flexShrink: 0,
+      width: isTablet ? window.innerWidth : 340, flexShrink: 0,
       background: "#fff",
       borderRight: "1px solid #E5E3EE",
       display: "flex", flexDirection: "column",
@@ -694,10 +695,10 @@ if (cartItems.length === 0) {
 
               return (
                 <button key={k} onClick={() => handleKey(k)} style={{
-                  padding: "7px 4px",
+                  padding: isTablet ? "4px 2px" : "7px 4px",
                   borderRadius: 7,
                   border: "none",
-                  fontSize: isSpecial ? 11.5 : 13.5,
+                  fontSize: isTablet ? 12 : (isSpecial ? 11.5 : 13.5),
                   fontWeight: fw,
                   cursor: "pointer",
                   background: bg,
@@ -718,7 +719,7 @@ if (cartItems.length === 0) {
                 { key:"card", label:"Card", icon:"💳" },
               ].map(({ key, label, icon }) => (
                 <button key={key} onClick={() => setPayMode(key)} style={{
-                  flex:1, padding:"10px 0",
+                  flex:1, padding: isTablet ? "6px 0" : "10px 0",
                   borderRadius:12,
                   border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
                   background: payMode === key ? "#EDE9FF" : "#fff",
@@ -734,7 +735,7 @@ if (cartItems.length === 0) {
             </div>
             <button onClick={handleConfirmOrder} disabled={submitting || cart.length === 0} style={{
               width:"100%", background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC", color:"#fff",
-              border:"none", borderRadius:12, padding:"12px 0",
+              border:"none", borderRadius:12, padding: isTablet ? "8px 0" : "12px 0",
               fontSize:14, fontWeight:700, cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
             }}>
               {submitting ? "🔄 Confirming..." : "✅ Confirm Order"}
