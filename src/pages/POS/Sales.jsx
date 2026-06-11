@@ -104,9 +104,6 @@ export default function Sales() {
   const [loading, setLoading]         = useState(true);
   const [submitting, setSubmitting]   = useState(false);
   const branchId = localStorage.getItem("branchid") || localStorage.getItem("branchId");
-  const isTablet =
-    typeof window !== "undefined" &&
-    window.innerWidth <= 1024;
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -492,7 +489,7 @@ if (cartItems.length === 0) {
     main: { display: "flex", flex: 1, overflow: "hidden" },
     /* LEFT PANEL */
     left: {
-      width: isTablet ? 280 : 340, flexShrink: 0,
+      width: 340, flexShrink: 0,
       background: "#fff",
       borderRight: "1px solid #E5E3EE",
       display: "flex", flexDirection: "column",
@@ -524,14 +521,19 @@ if (cartItems.length === 0) {
       display: "flex", alignItems: "center", justifyContent: "center",
       color: "#374151",
     },
+    bottomPanel: {
+      overflowY: "auto",
+      flexShrink: 0,
+      maxHeight: "58vh",
+    },
     totals: {
-      padding: isTablet ? "4px 12px" : "7px 18px 6px",
+      padding: "5px 14px",
       borderTop: "1px solid #F0EEF8",
       background: "#FAFAFA",
       flexShrink: 0,
     },
     paymentSection: {
-      padding: isTablet ? "8px" : "14px",
+      padding: "8px",
       margin: "0 14px 10px",
       borderRadius: 16,
       background: "#FFFFFF",
@@ -555,7 +557,6 @@ if (cartItems.length === 0) {
       display: "grid",
       gridTemplateColumns: "repeat(4,1fr)",
       gap: 2, padding: "0 8px 4px",
-      flexShrink: 0,
     },
     bottomBtns: {
       display: "flex", gap: 7,
@@ -674,17 +675,19 @@ if (cartItems.length === 0) {
 
           </div>
 
-          {/* Total only */}
-          <div style={S.totals}>
-            <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700, fontSize:15 }}>
-              <span style={{ color:"#1A1A2E" }}>Total</span>
-              <span style={{ color:"#7C5CFC" }}>{fmt(total)}</span>
+          {/* ── BOTTOM PANEL (always visible, scrolls if needed) ── */}
+          <div style={S.bottomPanel}>
+            {/* Total only */}
+            <div style={S.totals}>
+              <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700, fontSize:15 }}>
+                <span style={{ color:"#1A1A2E" }}>Total</span>
+                <span style={{ color:"#7C5CFC" }}>{fmt(total)}</span>
+              </div>
             </div>
-          </div>
 
-          {/* Numpad */}
-          <div style={S.numpadGrid}>
-            {numpadKeys.map((k) => {
+            {/* Numpad */}
+            <div style={S.numpadGrid}>
+              {numpadKeys.map((k) => {
               const isQty      = k === "Qty";
               const isPct      = k === "%";
               const isPrice    = k === "Price";
@@ -703,10 +706,10 @@ if (cartItems.length === 0) {
 
               return (
                 <button key={k} onClick={() => handleKey(k)} style={{
-                  padding: isTablet ? "2px" : "7px 4px",
+                  padding: "5px 4px",
                   borderRadius: 7,
                   border: "none",
-                  fontSize: isTablet ? 11 : 13,
+                  fontSize: 12.5,
                   fontWeight: fw,
                   cursor: "pointer",
                   background: bg,
@@ -727,14 +730,14 @@ if (cartItems.length === 0) {
                 { key:"card", label:"Card", icon:"💳" },
               ].map(({ key, label, icon }) => (
                 <button key={key} onClick={() => setPayMode(key)} style={{
-                  flex:1, padding: isTablet ? "3px 0" : "10px 0",
-                  borderRadius:12,
+                  flex:1, padding: "5px 0",
+                  borderRadius:8,
                   border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
                   background: payMode === key ? "#EDE9FF" : "#fff",
                   color: payMode === key ? "#7C5CFC" : "#374151",
                   fontWeight: payMode === key ? 700 : 500,
-                  fontSize:13, cursor:"pointer",
-                  display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+                  fontSize:11.5, cursor:"pointer",
+                  display:"flex", alignItems:"center", justifyContent:"center", gap:4,
                 }}>
                   <span style={{ fontSize:16 }}>{icon}</span>
                   {label}
@@ -743,11 +746,12 @@ if (cartItems.length === 0) {
             </div>
             <button onClick={handleConfirmOrder} disabled={submitting || cart.length === 0} style={{
               width:"100%", background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC", color:"#fff",
-              border:"none", borderRadius:12, padding: isTablet ? "5px 0" : "12px 0",
+              border:"none", borderRadius:12, padding: "5px 0",
               fontSize:14, fontWeight:700, cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
             }}>
               {submitting ? "🔄 Confirming..." : "✅ Confirm Order"}
             </button>
+          </div>
           </div>
         </aside>
 
