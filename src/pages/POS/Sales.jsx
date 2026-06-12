@@ -742,7 +742,7 @@ const S = {
     fontFamily: "inherit",
   },
  cartScroll: {
-    height: 265,
+    height: 270,
     overflowY: "auto",
     padding: "4px 14px",
     borderBottom: "1px solid #F0EEF8",
