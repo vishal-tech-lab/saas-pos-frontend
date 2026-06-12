@@ -5,61 +5,6 @@ import { updateCustomerDisplay, clearCustomerDisplay } from "../../services/cust
 import CloseregisterModal from "../dailysales/CloseregisterModal";
 import BillPreviewModal from "../../components/bill/BillPreviewModal";
 import BillLayout from "../../components/bill/BillLayout";
-/* ── EXACT COLORS FROM IMAGE ───────────────────────────────────────────
-   Navbar bg:        #4B3FA7  (deep indigo-purple)
-   Navbar text:      #FFFFFF
-   Close Reg btn:    #E63973  (hot pink-red)
-   Online dot:       #22C55E  (green)
-   Page bg:          #F3F2F7  (very light lavender-grey)
-   Left panel bg:    #FFFFFF
-   Left panel border:#E5E3EE
-   "Current Order"   #1A1A2E  (near black)
-   Item count badge: #EDE9FF bg / #7C5CFC text
-   Clear btn:        #7C5CFC (purple) icon + text
-   Cart item name:   #1A1A2E
-   Cart item price:  #7C5CFC (purple)
-   − + buttons:      #F3F2F7 bg / #555 border / #1A1A2E text
-   × remove:         #E63973
-   Subtotal/Discount:#6B7280 (gray)
-   Discount value:   #E63973
-   Total label:      #1A1A2E bold
-   Total value:      #7C5CFC bold large
-   Customer/Note/Course buttons: #FFFFFF bg / #E5E3EE border / #374151 text
-   Numpad numbers:   #FFFFFF bg / no border / #1A1A2E text
-   Numpad Qty/%/Price:#EDE9FF bg / #7C5CFC text
-   Numpad +/-:       #FEF3C7 bg / #92400E text  (amber)
-   Numpad ⌫:         #FEE2E2 bg / #E63973 icon
-   Set Table btn:    #4B3FA7 bg / #FFFFFF text
-   Set Tab btn:      #FFFFFF bg / #7C5CFC border+text
-   Payment btn:      #DCFCE7 bg / #166534 text  (light green)
-   Sub-nav bg:       #FFFFFF
-   Sub-nav border:   #E5E3EE
-   Register tab active: #EDE9FF bg / #7C5CFC text
-   Direct Sale btn:  #7C5CFC bg / #FFFFFF text (pill)
-   Category area bg: #FFFFFF
-   "All Items" pill: #7C5CFC bg / #FFFFFF text
-   Other cat pills:  #FFFFFF bg / #E5E3EE border, colored text per category
-   Briyani:          #FEE2E2 bg / #DC2626 text
-   Combo:            #FEF3C7 bg / #D97706 text
-   Dinner:           #EDE9FF bg / #7C5CFC text
-   Egg:              #F0FDF4 bg / #16A34A text
-   Fried Rice:       #FFF7ED bg / #EA580C text
-   Meals:            #EFF6FF bg / #2563EB text
-   Morning:          #FEF3C7 bg / #D97706 text
-   Non Veg Starters: #FEE2E2 bg / #DC2626 text
-   Noodles:          #F0FDF4 bg / #16A34A text
-   Parotta:          #EDE9FF bg / #7C5CFC text
-   Sambar Packet:    #FFF7ED bg / #EA580C text
-   Shawarma:         #EFF6FF bg / #2563EB text
-   Tandoori Non Veg: #FEE2E2 bg / #DC2626 text
-   Drinks:           #EFF6FF bg / #2563EB text
-   Menu card bg:     #FFFFFF
-   Menu card border: #E5E3EE
-   Menu card name:   #1A1A2E bold uppercase
-   Menu card price:  #7C5CFC
-   Cart badge:       #7C5CFC bg / #FFFFFF text (circle)
-   Load More btn:    #FFFFFF bg / #E5E3EE border / #374151 text
-────────────────────────────────────────────────────────────────────── */
 
 const CAT_STYLES = {
   all:        { bg: "#7C5CFC", color: "#FFFFFF" },
@@ -79,9 +24,7 @@ const CAT_STYLES = {
   drinks:     { bg: "#EFF6FF", color: "#2563EB" },
 };
 
-// Menu items and categories fetched from backend API
-
-const fmt = (n) => `₹ ${Number(n).toFixed(2)}`;
+const fmt = (n) => `₹${Number(n).toFixed(2)}`;
 
 export default function Sales() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -107,12 +50,6 @@ export default function Sales() {
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
-    if (typeof window !== "undefined") {
-      console.log(
-        window.innerWidth,
-        window.innerHeight
-      );
-    }
     return () => clearInterval(t);
   }, []);
 
@@ -125,16 +62,14 @@ export default function Sales() {
       setLoading(true);
       const [products, cats] = await Promise.all([getProducts(), getCategories()]);
       setMenuItems(products);
-      
-      // Build category list from fetched categories
       const uniqueCats = [{ id: "all", label: "All Items" }];
       if (Array.isArray(cats)) {
         cats.forEach(cat => {
-  uniqueCats.push({
-    id: cat.itemcategoryname.toLowerCase(),
-    label: cat.itemcategoryname
-  });
-});
+          uniqueCats.push({
+            id: cat.itemcategoryname.toLowerCase(),
+            label: cat.itemcategoryname
+          });
+        });
       }
       setCategories(uniqueCats);
     } catch (err) {
@@ -145,41 +80,25 @@ export default function Sales() {
   };
 
   const allFiltered = menuItems.filter((item) => {
-
-  const itemCat =
-    (item.category || "")
-      .toLowerCase();
-
-  const matchCat =
-    activeCategory === "all" ||
-    itemCat === activeCategory;
-
-  const matchSearch =
-    item.itemname
-      ?.toLowerCase()
-      .includes(search.toLowerCase());
-
-  return matchCat && matchSearch;
-});
+    const itemCat = (item.category || "").toLowerCase();
+    const matchCat = activeCategory === "all" || itemCat === activeCategory;
+    const matchSearch = item.itemname?.toLowerCase().includes(search.toLowerCase());
+    return matchCat && matchSearch;
+  });
   const filtered = allFiltered.slice(0, visibleCount);
 
-  // Add to cart + auto-select that item
   const addToCart = (item) => {
     const pid = item.id || item.itemid;
     const pname = item.productname || item.itemname;
     const pprice = item.price;
     const billNo = draftBillNo || "BILL-" + Date.now();
-
-    if (!draftBillNo) {
-      setDraftBillNo(billNo);
-    }
+    if (!draftBillNo) setDraftBillNo(billNo);
 
     setCart((prev) => {
       const ex = prev.find((c) => c.itemid === pid);
       const next = ex
         ? prev.map((c) => c.itemid === pid ? { ...c, qty: c.qty + 1 } : c)
         : [...prev, { itemid: pid, itemname: pname, price: pprice, qty: 1 }];
-
       pushToCustomerDisplay(next, billNo);
       return next;
     });
@@ -187,20 +106,18 @@ export default function Sales() {
     setQtyInput("");
   };
 
-  // Click cart row → select it, reset keypad buffer
   const selectCartItem = (id) => {
     setSelectedCartId(id);
     setQtyInput("");
   };
 
-  // Set qty directly for selected item
   const setQty = (id, qty) => {
     const next = cart.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, qty) } : c);
     setCart(next);
     pushToCustomerDisplay(next, draftBillNo);
   };
 
-  const updateQty  = (id, d) => {
+  const updateQty = (id, d) => {
     const next = cart.map((c) => c.itemid === id ? { ...c, qty: Math.max(1, c.qty + d) } : c);
     setCart(next);
     pushToCustomerDisplay(next, draftBillNo);
@@ -219,25 +136,21 @@ export default function Sales() {
     setCart([]);
     setSelectedCartId(null);
     setQtyInput("");
-   if (branchId) {
-
-    updateCustomerDisplay({
+    if (branchId) {
+      updateCustomerDisplay({
         branchid: branchId,
         billno: null,
         total: 0,
         status: "WAITING",
         items: []
-    });
-
-}
+      });
+    }
   };
 
-  // Keypad handler — digits build qty buffer, ⌫ deletes, +/- toggles
   const handleKey = (k) => {
     setActiveKey(k);
     setTimeout(() => setActiveKey(null), 150);
     if (!selectedCartId) return;
-
     if (k === "⌫") {
       const next = qtyInput.slice(0, -1);
       setQtyInput(next);
@@ -253,115 +166,47 @@ export default function Sales() {
       }
       return;
     }
-    // Qty / % / Price / +/- — just flash, no action for now
   };
 
+  const user = JSON.parse(localStorage.getItem("user"));
 
-const user =
-  JSON.parse(
-    localStorage.getItem("user")
-  );
-
- const handleConfirmOrder = async () => {
-
-  if (cart.length === 0) {
-
-    alert("Cart is empty");
-    return;
-
-  }
-  setSubmitting(true);
-
-  try {
-
-    const branchName =
-      localStorage.getItem(
-        "currentBranch"
-      );
-
-    if (!branchName) {
-
-      alert(
-        "Branch not found"
-      );
-
-      return;
+  const handleConfirmOrder = async () => {
+    if (cart.length === 0) { alert("Cart is empty"); return; }
+    setSubmitting(true);
+    try {
+      const branchName = localStorage.getItem("currentBranch");
+      if (!branchName) { alert("Branch not found"); return; }
+      const billNo = draftBillNo || "BILL-" + Date.now();
+      if (!draftBillNo) setDraftBillNo(billNo);
+      for (const item of cart) {
+        await createSale({
+          branchname: branchName,
+          productname: item.itemname,
+          qty: item.qty,
+          paymentmethod: payMode,
+          billno: billNo
+        });
+      }
+      await clearCustomerDisplay(branchId);
+      setBillData({ billNo, items: cart, total, paymentMethod: payMode, branchName });
+      setShowBillPreview(true);
+    } catch (err) {
+      console.error("Error confirming order:", err);
+      alert("Failed to confirm order");
+    } finally {
+      setSubmitting(false);
     }
-
-    const billNo = draftBillNo || "BILL-" + Date.now();
-    if (!draftBillNo) {
-      setDraftBillNo(billNo);
-    }
-
-    for (const item of cart) {
-
-      await createSale({
-
-        branchname:
-          branchName,
-
-        productname:
-          item.itemname,
-
-        qty:
-          item.qty,
-
-        paymentmethod:
-          payMode,
-
-        billno:
-          billNo
-
-      });
-
-    }
-await clearCustomerDisplay(branchId);
-
-    setBillData({
-      billNo,
-      items: cart,
-      total,
-      paymentMethod: payMode,
-      branchName
-    });
-    setShowBillPreview(true);
-
-  } catch (err) {
-
-    console.error(
-      "Error confirming order:",
-      err
-    );
-
-    alert(
-      "Failed to confirm order"
-    );
-
-  } finally {
-
-    setSubmitting(false);
-
-  }
-
-};
+  };
 
   const handleCloseRegister = async () => {
     try {
       const branchId = localStorage.getItem("branchId");
-
-      if (!branchId) {
-        alert("Branch not selected");
-        return;
-      }
-
+      if (!branchId) { alert("Branch not selected"); return; }
       await closeRegisterAPI(branchId);
-
       alert("Register closed successfully");
-
       setShowCloseModal(false);
     } catch (err) {
       console.error(err);
-
       alert("Failed to close register");
     }
   };
@@ -379,69 +224,39 @@ await clearCustomerDisplay(branchId);
 
   const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
   const discount = 0;
-  const total    = subtotal - discount;
+  const total = subtotal - discount;
 
- const pushToCustomerDisplay = async (
-  cartItems,
-  billNo
-) => {
-
-  if (!branchId) {
-    return;
-  }
-
-if (cartItems.length === 0) {
-
+  const pushToCustomerDisplay = async (cartItems, billNo) => {
+    if (!branchId) return;
+    if (cartItems.length === 0) {
+      await updateCustomerDisplay({ branchid: branchId, billno: null, total: 0, status: "WAITING", items: [] });
+      return;
+    }
+    const grandTotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
     await updateCustomerDisplay({
-
       branchid: branchId,
-      billno: null,
-      total: 0,
-      status: "WAITING",
-      items: []
-
+      billno: billNo,
+      total: grandTotal,
+      status: "ACTIVE",
+      items: cartItems.map(item => ({
+        itemname: item.itemname,
+        qty: item.qty,
+        price: item.price,
+        total: item.price * item.qty
+      }))
     });
-
-    return;
-}
-
-  const grandTotal =
-    cartItems.reduce(
-      (sum, item) =>
-        sum + item.price * item.qty,
-      0
-    );
-
-  const payload = {
-    branchid: branchId,
-    billno: billNo,
-    total: grandTotal,
-    status: "ACTIVE",
-    items: cartItems.map(item => ({
-      itemname: item.itemname,
-      qty: item.qty,
-      price: item.price,
-      total: item.price * item.qty
-    }))
   };
-
-  await updateCustomerDisplay(
-    payload
-  );
-};
 
   const timeStr = time.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
-  /* ── Styles ──────────────────────────────────────────────── */
   const S = {
     root: {
-  background: "#F3F2F7",
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-},
-    /* NAV */
+      background: "#F3F2F7",
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+    },
     nav: {
       background: "#4B3FA7",
       color: "#fff",
@@ -477,7 +292,6 @@ if (cartItems.length === 0) {
       padding: "6px 13px", fontSize: 12.5,
       fontWeight: 600, cursor: "pointer",
     },
-    /* SUBNAV */
     subnav: {
       background: "#fff",
       borderBottom: "1px solid #E5E3EE",
@@ -485,9 +299,7 @@ if (cartItems.length === 0) {
       display: "flex", alignItems: "center",
       gap: 4, height: 44, flexShrink: 0,
     },
-    /* MAIN */
     main: { display: "flex", flex: 1, overflow: "hidden" },
-    /* LEFT PANEL */
     left: {
       width: 340, flexShrink: 0,
       background: "#fff",
@@ -507,24 +319,37 @@ if (cartItems.length === 0) {
       borderRadius: 20, padding: "2px 10px",
       fontSize: 11.5, fontWeight: 600, marginLeft: 8,
     },
-    cartScroll: { flex: 1, overflowY: "auto", padding: "4px 14px" },
+    /* ── CART SCROLL: fixed height so bottom panel is always visible ── */
+    cartScroll: {
+      overflowY: "auto",
+      padding: "4px 10px",
+      /* takes remaining space but leaves room for bottom panel */
+      flex: 1,
+      minHeight: 0,
+    },
+    /* ── SINGLE-LINE CART ROW ── */
     cartRow: {
-      display: "flex", alignItems: "center",
-      padding: "7px 0", borderBottom: "1px solid #F3F2F7",
-      gap: 6,
+      display: "flex",
+      alignItems: "center",
+      padding: "5px 6px",
+      borderRadius: 7,
+      marginBottom: 2,
+      gap: 4,
+      cursor: "pointer",
     },
     qtyBtn: {
-      width: 22, height: 22, borderRadius: 6,
+      width: 20, height: 20, borderRadius: 5,
       border: "1px solid #D1D5DB",
       background: "#F9FAFB",
-      cursor: "pointer", fontSize: 14,
+      cursor: "pointer", fontSize: 13,
       display: "flex", alignItems: "center", justifyContent: "center",
       color: "#374151",
+      flexShrink: 0,
     },
     bottomPanel: {
-      overflowY: "auto",
       flexShrink: 0,
-      maxHeight: "58vh",
+      overflowY: "auto",
+      maxHeight: "56vh",
     },
     totals: {
       padding: "5px 14px",
@@ -541,28 +366,11 @@ if (cartItems.length === 0) {
       boxShadow: "0 1px 2px rgba(15, 23, 42, 0.04)",
       flexShrink: 0,
     },
-    actionRow: {
-      padding: "7px 14px",
-      display: "flex", gap: 6,
-      borderTop: "1px solid #F0EEF8",
-    },
-    actionBtn: {
-      flex: 1, background: "#fff",
-      border: "1px solid #E5E3EE",
-      borderRadius: 7, padding: "7px 0",
-      fontSize: 12, color: "#374151",
-      cursor: "pointer",
-    },
     numpadGrid: {
       display: "grid",
       gridTemplateColumns: "repeat(4,1fr)",
       gap: 2, padding: "0 8px 4px",
     },
-    bottomBtns: {
-      display: "flex", gap: 7,
-      padding: "0 14px 14px",
-    },
-    /* RIGHT */
     right: { flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" },
     catBar: {
       background: "#fff",
@@ -570,14 +378,6 @@ if (cartItems.length === 0) {
       padding: "10px 18px 8px",
       display: "flex", flexWrap: "wrap", gap: 6,
       flexShrink: 0,
-    },
-    menuGrid: {
-      flex: 1, overflowY: "auto",
-      padding: "14px 18px",
-      display: "grid",
-      gridTemplateColumns: "repeat(5, 1fr)",
-      gap: 10,
-      alignContent: "start",
     },
   };
 
@@ -594,7 +394,7 @@ if (cartItems.length === 0) {
   return (
     <div style={S.root}>
 
-      {/* ── NAVBAR ─────────────────────────────────────── */}
+      {/* ── NAVBAR ── */}
       <header style={S.nav}>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <div style={S.logoBox}>⚡</div>
@@ -624,12 +424,10 @@ if (cartItems.length === 0) {
         </div>
       </header>
 
-
-
-      {/* ── MAIN ───────────────────────────────────────── */}
+      {/* ── MAIN ── */}
       <div style={S.main}>
 
-        {/* LEFT PANEL */}
+        {/* ── LEFT PANEL ── */}
         <aside style={S.left}>
 
           {/* Order Header */}
@@ -643,41 +441,65 @@ if (cartItems.length === 0) {
             </button>
           </div>
 
-          {/* Cart Items */}
+          {/* ── CART ITEMS (single line per item) ── */}
           <div style={S.cartScroll}>
             {cart.length === 0 && (
-              <div style={{ color:"#9CA3AF", textAlign:"center", paddingTop:32, fontSize:13 }}>No items yet</div>
+              <div style={{ color:"#9CA3AF", textAlign:"center", paddingTop:24, fontSize:13 }}>No items yet</div>
             )}
             {cart.map((item) => {
               const isSel = item.itemid === selectedCartId;
               return (
-              <div key={item.itemid} onClick={() => selectCartItem(item.itemid)} style={{
-                background: isSel ? "#EDE9FF" : "transparent",
-                borderRadius: isSel ? 8 : 0,
-                borderBottom: isSel ? "none" : "1px solid #F3F2F7",
-                marginBottom: 2,
-                cursor:"pointer",
-                padding: "7px 6px",
-              }}>
-                {/* Item name */}
-                <div style={{ fontWeight: isSel ? 700 : 600, fontSize:12.5, color: isSel ? "#7C5CFC" : "#1A1A2E", whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", marginBottom:5 }}>{item.itemname}</div>
-                {/* Price · qty controls · total · remove */}
-                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-                  <span style={{ fontSize:11.5, color: isSel ? "#7C5CFC" : "#7C5CFC", minWidth:48 }}>{fmt(item.price)}</span>
-                  <button style={{...S.qtyBtn, background: isSel?"#fff":"#F9FAFB"}} onClick={(e)=>{e.stopPropagation();updateQty(item.itemid,-1);selectCartItem(item.itemid);}}>−</button>
-                  <span style={{ fontSize:13, fontWeight:700, minWidth:18, textAlign:"center", color: isSel?"#7C5CFC":"#1A1A2E" }}>{item.qty}</span>
-                  <button style={{...S.qtyBtn, background: isSel?"#fff":"#F9FAFB"}} onClick={(e)=>{e.stopPropagation();updateQty(item.itemid,1);selectCartItem(item.itemid);}}>+</button>
-                  <span style={{ fontSize:13, fontWeight:600, color:"#1A1A2E", marginLeft:"auto" }}>{fmt(item.price * item.qty)}</span>
-                  <button onClick={(e)=>{e.stopPropagation();removeItem(item.itemid);}} style={{ background:"none", border:"none", color:"#E63973", fontSize:16, cursor:"pointer", lineHeight:1, padding:"0 2px" }}>✕</button>
-                </div>
-              </div>
-            );})}
+                <div
+                  key={item.itemid}
+                  onClick={() => selectCartItem(item.itemid)}
+                  style={{
+                    ...S.cartRow,
+                    background: isSel ? "#EDE9FF" : "transparent",
+                    borderBottom: isSel ? "none" : "1px solid #F3F2F7",
+                  }}
+                >
+                  {/* Name + price — truncated, takes available space */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{
+                      fontWeight: isSel ? 700 : 600,
+                      fontSize: 11.5,
+                      color: isSel ? "#7C5CFC" : "#1A1A2E",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      display: "block",
+                    }}>{item.itemname}</span>
+                    <span style={{ fontSize: 10.5, color: "#7C5CFC" }}>{fmt(item.price)}</span>
+                  </div>
 
+                  {/* Qty controls */}
+                  <button
+                    style={{ ...S.qtyBtn, background: isSel ? "#fff" : "#F9FAFB" }}
+                    onClick={(e) => { e.stopPropagation(); updateQty(item.itemid, -1); selectCartItem(item.itemid); }}
+                  >−</button>
+                  <span style={{ fontSize:12, fontWeight:700, minWidth:16, textAlign:"center", color: isSel ? "#7C5CFC" : "#1A1A2E" }}>{item.qty}</span>
+                  <button
+                    style={{ ...S.qtyBtn, background: isSel ? "#fff" : "#F9FAFB" }}
+                    onClick={(e) => { e.stopPropagation(); updateQty(item.itemid, 1); selectCartItem(item.itemid); }}
+                  >+</button>
+
+                  {/* Line total */}
+                  <span style={{ fontSize: 11.5, fontWeight: 600, color: "#1A1A2E", minWidth: 46, textAlign: "right" }}>{fmt(item.price * item.qty)}</span>
+
+                  {/* Remove */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeItem(item.itemid); }}
+                    style={{ background:"none", border:"none", color:"#E63973", fontSize:14, cursor:"pointer", lineHeight:1, padding:"0 2px", flexShrink:0 }}
+                  >✕</button>
+                </div>
+              );
+            })}
           </div>
 
-          {/* ── BOTTOM PANEL (always visible, scrolls if needed) ── */}
+          {/* ── BOTTOM PANEL ── */}
           <div style={S.bottomPanel}>
-            {/* Total only */}
+
+            {/* Total */}
             <div style={S.totals}>
               <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700, fontSize:15 }}>
                 <span style={{ color:"#1A1A2E" }}>Total</span>
@@ -688,77 +510,80 @@ if (cartItems.length === 0) {
             {/* Numpad */}
             <div style={S.numpadGrid}>
               {numpadKeys.map((k) => {
-              const isQty      = k === "Qty";
-              const isPct      = k === "%";
-              const isPrice    = k === "Price";
-              const isSpecial  = isQty || isPct || isPrice;
-              const isDelete   = k === "⌫";
-              const isPlusMinus= k === "+/-";
-              const pressed    = activeKey === k;
+                const isSpecial  = k === "Qty" || k === "%" || k === "Price";
+                const isDelete   = k === "⌫";
+                const isPlusMinus= k === "+/-";
+                const pressed    = activeKey === k;
 
-              let bg    = "#FFFFFF";
-              let color = "#1A1A2E";
-              let fw    = 500;
-              if (pressed)    { bg = "#7C5CFC"; color = "#fff"; }
-              else if (isSpecial) { bg = "#EDE9FF"; color = "#7C5CFC"; fw = 600; }
-              else if (isDelete)  { bg = "#FEE2E2"; color = "#E63973"; }
-              else if (isPlusMinus){ bg = "#FEF3C7"; color = "#92400E"; }
+                let bg    = "#FFFFFF";
+                let color = "#1A1A2E";
+                let fw    = 500;
+                if (pressed)      { bg = "#7C5CFC"; color = "#fff"; }
+                else if (isSpecial)   { bg = "#EDE9FF"; color = "#7C5CFC"; fw = 600; }
+                else if (isDelete)    { bg = "#FEE2E2"; color = "#E63973"; }
+                else if (isPlusMinus) { bg = "#FEF3C7"; color = "#92400E"; }
 
-              return (
-                <button key={k} onClick={() => handleKey(k)} style={{
-                  padding: "5px 4px",
-                  borderRadius: 7,
-                  border: "none",
-                  fontSize: 12.5,
-                  fontWeight: fw,
-                  cursor: "pointer",
-                  background: bg,
-                  color,
-                  transition: "background 0.1s",
-                }}>{k}</button>
-              );
-            })}
-          </div>
-
-          {/* Payment Mode */}
-          <div style={S.paymentSection}>
-            <div style={{ fontSize:11, fontWeight:600, color:"#6B7280", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
-            <div style={{ display:"flex", gap:6, marginBottom:10 }}>
-              {[
-                { key:"cash", label:"Cash", icon:"💵" },
-                { key:"upi",  label:"UPI",  icon:"📱" },
-                { key:"card", label:"Card", icon:"💳" },
-              ].map(({ key, label, icon }) => (
-                <button key={key} onClick={() => setPayMode(key)} style={{
-                  flex:1, padding: "5px 0",
-                  borderRadius:8,
-                  border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
-                  background: payMode === key ? "#EDE9FF" : "#fff",
-                  color: payMode === key ? "#7C5CFC" : "#374151",
-                  fontWeight: payMode === key ? 700 : 500,
-                  fontSize:11.5, cursor:"pointer",
-                  display:"flex", alignItems:"center", justifyContent:"center", gap:4,
-                }}>
-                  <span style={{ fontSize:16 }}>{icon}</span>
-                  {label}
-                </button>
-              ))}
+                return (
+                  <button key={k} onClick={() => handleKey(k)} style={{
+                    padding: "5px 4px",
+                    borderRadius: 7,
+                    border: "none",
+                    fontSize: 12.5,
+                    fontWeight: fw,
+                    cursor: "pointer",
+                    background: bg,
+                    color,
+                    transition: "background 0.1s",
+                  }}>{k}</button>
+                );
+              })}
             </div>
-            <button onClick={handleConfirmOrder} disabled={submitting || cart.length === 0} style={{
-              width:"100%", background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC", color:"#fff",
-              border:"none", borderRadius:12, padding: "5px 0",
-              fontSize:14, fontWeight:700, cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
-            }}>
-              {submitting ? "🔄 Confirming..." : "✅ Confirm Order"}
-            </button>
-          </div>
+
+            {/* Payment Mode */}
+            <div style={S.paymentSection}>
+              <div style={{ fontSize:11, fontWeight:600, color:"#6B7280", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
+              <div style={{ display:"flex", gap:6, marginBottom:10 }}>
+                {[
+                  { key:"cash", label:"Cash", icon:"💵" },
+                  { key:"upi",  label:"UPI",  icon:"📱" },
+                  { key:"card", label:"Card", icon:"💳" },
+                ].map(({ key, label, icon }) => (
+                  <button key={key} onClick={() => setPayMode(key)} style={{
+                    flex:1, padding: "5px 0",
+                    borderRadius:8,
+                    border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
+                    background: payMode === key ? "#EDE9FF" : "#fff",
+                    color: payMode === key ? "#7C5CFC" : "#374151",
+                    fontWeight: payMode === key ? 700 : 500,
+                    fontSize:11.5, cursor:"pointer",
+                    display:"flex", alignItems:"center", justifyContent:"center", gap:4,
+                  }}>
+                    <span style={{ fontSize:16 }}>{icon}</span>
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={handleConfirmOrder}
+                disabled={submitting || cart.length === 0}
+                style={{
+                  width:"100%",
+                  background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC",
+                  color:"#fff",
+                  border:"none", borderRadius:12, padding: "5px 0",
+                  fontSize:14, fontWeight:700,
+                  cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
+                }}
+              >
+                {submitting ? "🔄 Confirming..." : "✅ Confirm Order"}
+              </button>
+            </div>
           </div>
         </aside>
 
-        {/* RIGHT PANEL */}
+        {/* ── RIGHT PANEL ── */}
         <div style={S.right}>
 
-          {/* ── TABLES VIEW ── */}
           {activeTab === "tables" && (
             <div style={{ flex:1, overflowY:"auto", padding:"20px 24px" }}>
               <div style={{ fontWeight:700, fontSize:15, color:"#1A1A2E", marginBottom:16 }}>Tables</div>
@@ -797,152 +622,128 @@ if (cartItems.length === 0) {
             </div>
           )}
 
-          {/* ── REGISTER / ORDERS VIEW ── */}
           {activeTab !== "tables" && <>
 
-          {/* Category bar */}
-          <div style={S.catBar}>
-            {categories.map((cat) => {
-              const active = activeCategory === cat.id;
-              const cs = CAT_STYLES[cat.id] || { bg:"#F3F2F7", color:"#374151" };
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => { setActiveCategory(cat.id); setVisibleCount(15); }}
-                  style={{
-                    padding: "5px 14px",
-                    borderRadius: 20,
-                    border: active ? "none" : "1px solid #E5E3EE",
-                    background: active ? cs.bg : "#fff",
-                    color: active ? (cat.id === "all" ? "#fff" : cs.color) : cs.color,
-                    fontSize: 12.5,
-                    fontWeight: active ? 600 : 500,
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    transition: "all 0.12s",
-                  }}
-                >
-                  {cat.label}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Menu grid */}
-          <div style={{ flex:1, overflowY:"auto", padding:"14px 18px" }}>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(5, 1fr)",
-              gap: 10,
-            }}>
-              {filtered.map((item) => {
-                const pid = item.id || item.itemid;
-                const pname = item.productname || item.itemname;
-                const pprice = item.price;
-                const inCart = cart.find((c) => c.itemid === pid);
+            {/* Category bar */}
+            <div style={S.catBar}>
+              {categories.map((cat) => {
+                const active = activeCategory === cat.id;
+                const cs = CAT_STYLES[cat.id] || { bg:"#F3F2F7", color:"#374151" };
                 return (
                   <button
-                    key={pid}
-                    onClick={() => addToCart(item)}
+                    key={cat.id}
+                    onClick={() => { setActiveCategory(cat.id); setVisibleCount(15); }}
                     style={{
-                      background: "#fff",
-                      border: inCart ? "1.5px solid #7C5CFC" : "1px solid #E5E3EE",
-                      borderRadius: 10,
-                      padding: "16px 8px 12px",
+                      padding: "5px 14px",
+                      borderRadius: 20,
+                      border: active ? "none" : "1px solid #E5E3EE",
+                      background: active ? cs.bg : "#fff",
+                      color: active ? (cat.id === "all" ? "#fff" : cs.color) : cs.color,
+                      fontSize: 12.5,
+                      fontWeight: active ? 600 : 500,
                       cursor: "pointer",
-                      textAlign: "center",
-                      position: "relative",
-                      transition: "border-color 0.12s",
+                      whiteSpace: "nowrap",
+                      transition: "all 0.12s",
                     }}
                   >
-                    {/* cart badge */}
-                    {inCart && (
-                      <span style={{
-                        position:"absolute", top:-7, right:-7,
-                        background:"#7C5CFC", color:"#fff",
-                        width:20, height:20, borderRadius:9999,
-                        fontSize:10.5, fontWeight:700,
-                        display:"flex", alignItems:"center", justifyContent:"center",
-                      }}>{inCart.qty}</span>
-                    )}
-                    <div style={{
-                      fontWeight: 700, fontSize: 11.5, color: "#1A1A2E",
-                      lineHeight: 1.35, minHeight: 30,
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      whiteSpace: "pre-line",
-                    }}>{pname} <br /> ₹{pprice}</div>
+                    {cat.label}
                   </button>
                 );
               })}
             </div>
 
-            {/* Load More */}
-            {allFiltered.length > visibleCount && (
-              <div style={{ textAlign:"center", marginTop:18 }}>
-                <button
-                  onClick={() => setVisibleCount((v) => v + 10)}
-                  style={{
-                    background:"#fff", border:"1px solid #E5E3EE",
-                    borderRadius:8, padding:"9px 36px",
-                    fontSize:13, color:"#374151", fontWeight:500,
-                    cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6,
-                  }}
-                >Load More ↓</button>
+            {/* Menu grid */}
+            <div style={{ flex:1, overflowY:"auto", padding:"14px 18px" }}>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(5, 1fr)",
+                gap: 10,
+              }}>
+                {filtered.map((item) => {
+                  const pid = item.id || item.itemid;
+                  const pname = item.productname || item.itemname;
+                  const pprice = item.price;
+                  const inCart = cart.find((c) => c.itemid === pid);
+                  return (
+                    <button
+                      key={pid}
+                      onClick={() => addToCart(item)}
+                      style={{
+                        background: "#fff",
+                        border: inCart ? "1.5px solid #7C5CFC" : "1px solid #E5E3EE",
+                        borderRadius: 10,
+                        padding: "16px 8px 12px",
+                        cursor: "pointer",
+                        textAlign: "center",
+                        position: "relative",
+                        transition: "border-color 0.12s",
+                      }}
+                    >
+                      {inCart && (
+                        <span style={{
+                          position:"absolute", top:-7, right:-7,
+                          background:"#7C5CFC", color:"#fff",
+                          width:20, height:20, borderRadius:9999,
+                          fontSize:10.5, fontWeight:700,
+                          display:"flex", alignItems:"center", justifyContent:"center",
+                        }}>{inCart.qty}</span>
+                      )}
+                      <div style={{
+                        fontWeight: 700, fontSize: 11.5, color: "#1A1A2E",
+                        lineHeight: 1.35,
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        flexDirection: "column",
+                      }}>
+                        <span>{pname}</span>
+                        <span style={{ color:"#7C5CFC", marginTop:3 }}>₹{pprice}</span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-            )}
-          </div>
+
+              {allFiltered.length > visibleCount && (
+                <div style={{ textAlign:"center", marginTop:18 }}>
+                  <button
+                    onClick={() => setVisibleCount((v) => v + 10)}
+                    style={{
+                      background:"#fff", border:"1px solid #E5E3EE",
+                      borderRadius:8, padding:"9px 36px",
+                      fontSize:13, color:"#374151", fontWeight:500,
+                      cursor:"pointer", display:"inline-flex", alignItems:"center", gap:6,
+                    }}
+                  >Load More ↓</button>
+                </div>
+              )}
+            </div>
           </>}
         </div>
       </div>
 
-      { showCloseModal && (
-    <CloseregisterModal
-  isOpen={showCloseModal}
-  onClose={() => setShowCloseModal(false)}
-/>
+      {showCloseModal && (
+        <CloseregisterModal
+          isOpen={showCloseModal}
+          onClose={() => setShowCloseModal(false)}
+        />
       )}
 
-     {showBillPreview && billData && (
-
-  <BillPreviewModal
-
-    isOpen={showBillPreview}
-
-    onClose={() => {
-
-      setShowBillPreview(false);
-
-      clearCart();
-
-    }}
-
-  >
-
-    <BillLayout
-
-      billNo={billData.billNo}
-
-      paymentMethod={
-        billData.paymentMethod
-      }
-
-      cartItems={
-        billData.items
-      }
-
-      subtotal={
-        billData.total
-      }
-
-      total={
-        billData.total
-      }
-
-    />
-
-  </BillPreviewModal>
-
-)}
+      {showBillPreview && billData && (
+        <BillPreviewModal
+          isOpen={showBillPreview}
+          onClose={() => {
+            setShowBillPreview(false);
+            clearCart();
+          }}
+        >
+          <BillLayout
+            billNo={billData.billNo}
+            paymentMethod={billData.paymentMethod}
+            cartItems={billData.items}
+            subtotal={billData.total}
+            total={billData.total}
+          />
+        </BillPreviewModal>
+      )}
 
     </div>
   );
