@@ -322,7 +322,7 @@ export default function Sales() {
     cartScroll: {
       overflowY: "auto",
       padding: "2px 8px",
-      flex: 1,
+      height: 180,
       minHeight: 0,
     },
     cartRow: {
