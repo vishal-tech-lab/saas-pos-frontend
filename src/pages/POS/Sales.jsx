@@ -715,7 +715,7 @@ const S = {
 
   /* LEFT PANEL */
   left: {
-    width: 340, flexShrink: 0,
+    width: 300, flexShrink: 0,
     background: "#fff",
     borderRight: "1px solid #E5E3EE",
     display: "flex", flexDirection: "column",
@@ -741,13 +741,13 @@ const S = {
     display: "flex", alignItems: "center", gap: 4,
     fontFamily: "inherit",
   },
-  cartScroll: {
+ cartScroll: {
     flex: 1,
     overflowY: "auto",
     padding: "4px 14px",
     minHeight: 0,
     borderBottom: "1px solid #F0EEF8",
-  },
+},
   emptyCart: {
     color: "#9CA3AF", textAlign: "center",
     paddingTop: 32, fontSize: 13,
