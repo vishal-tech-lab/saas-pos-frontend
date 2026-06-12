@@ -186,6 +186,7 @@ function Auth() {
   }, []);
 
   useEffect(() => {
+
     const hostname = window.location.hostname;
     const parts = hostname.split(".");
 
@@ -194,6 +195,20 @@ function Auth() {
       localStorage.setItem("tenant", subdomain);
       console.log("Tenant:", subdomain);
     }
+    if (hostname !== "localhost") {
+
+  const subdomain = parts[0];
+
+  localStorage.setItem(
+    "tenant",
+    subdomain
+  );
+
+  console.log(
+    "Tenant:",
+    subdomain
+  );
+}
   }, []);
 
   useEffect(() => {
