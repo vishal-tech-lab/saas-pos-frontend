@@ -308,7 +308,7 @@ export default function Sales() {
       overflow: "hidden",
     },
     orderHeader: {
-      padding: "10px 18px 8px",
+      padding: "6px 12px 5px",
       borderBottom: "1px solid #F0EEF8",
       display: "flex", alignItems: "center",
       justifyContent: "space-between",
@@ -319,57 +319,49 @@ export default function Sales() {
       borderRadius: 20, padding: "2px 10px",
       fontSize: 11.5, fontWeight: 600, marginLeft: 8,
     },
-    /* ── CART SCROLL: fixed height so bottom panel is always visible ── */
     cartScroll: {
       overflowY: "auto",
-      padding: "4px 10px",
-      /* takes remaining space but leaves room for bottom panel */
+      padding: "2px 8px",
       flex: 1,
       minHeight: 0,
     },
-    /* ── SINGLE-LINE CART ROW ── */
     cartRow: {
       display: "flex",
       alignItems: "center",
-      padding: "5px 6px",
-      borderRadius: 7,
-      marginBottom: 2,
+      padding: "3px 5px",
+      borderRadius: 6,
+      marginBottom: 1,
       gap: 4,
       cursor: "pointer",
     },
     qtyBtn: {
-      width: 20, height: 20, borderRadius: 5,
+      width: 18, height: 18, borderRadius: 4,
       border: "1px solid #D1D5DB",
       background: "#F9FAFB",
-      cursor: "pointer", fontSize: 13,
+      cursor: "pointer", fontSize: 12,
       display: "flex", alignItems: "center", justifyContent: "center",
       color: "#374151",
       flexShrink: 0,
     },
     bottomPanel: {
       flexShrink: 0,
-      overflowY: "auto",
-      maxHeight: "56vh",
+      borderTop: "1px solid #F0EEF8",
     },
     totals: {
-      padding: "5px 14px",
-      borderTop: "1px solid #F0EEF8",
+      padding: "4px 12px",
       background: "#FAFAFA",
-      flexShrink: 0,
     },
     paymentSection: {
-      padding: "8px",
-      margin: "0 14px 10px",
-      borderRadius: 16,
+      padding: "6px 8px",
+      margin: "0 10px 6px",
+      borderRadius: 12,
       background: "#FFFFFF",
       border: "1px solid #E5E3EE",
-      boxShadow: "0 1px 2px rgba(15, 23, 42, 0.04)",
-      flexShrink: 0,
     },
     numpadGrid: {
       display: "grid",
       gridTemplateColumns: "repeat(4,1fr)",
-      gap: 2, padding: "0 8px 4px",
+      gap: 2, padding: "0 8px 3px",
     },
     right: { flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" },
     catBar: {
@@ -499,7 +491,7 @@ export default function Sales() {
 
             {/* Total */}
             <div style={S.totals}>
-              <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700, fontSize:15 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", fontWeight:700, fontSize:13 }}>
                 <span style={{ color:"#1A1A2E" }}>Total</span>
                 <span style={{ color:"#7C5CFC" }}>{fmt(total)}</span>
               </div>
@@ -523,10 +515,10 @@ export default function Sales() {
 
                 return (
                   <button key={k} onClick={() => handleKey(k)} style={{
-                    padding: "5px 4px",
-                    borderRadius: 7,
+                    padding: "4px 2px",
+                    borderRadius: 6,
                     border: "none",
-                    fontSize: 12.5,
+                    fontSize: 11.5,
                     fontWeight: fw,
                     cursor: "pointer",
                     background: bg,
@@ -539,24 +531,24 @@ export default function Sales() {
 
             {/* Payment Mode */}
             <div style={S.paymentSection}>
-              <div style={{ fontSize:11, fontWeight:600, color:"#6B7280", marginBottom:10, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
-              <div style={{ display:"flex", gap:6, marginBottom:10 }}>
+              <div style={{ fontSize:10, fontWeight:600, color:"#6B7280", marginBottom:6, textTransform:"uppercase", letterSpacing:"0.05em" }}>Payment Mode</div>
+              <div style={{ display:"flex", gap:5, marginBottom:7 }}>
                 {[
                   { key:"cash", label:"Cash", icon:"💵" },
                   { key:"upi",  label:"UPI",  icon:"📱" },
                   { key:"card", label:"Card", icon:"💳" },
                 ].map(({ key, label, icon }) => (
                   <button key={key} onClick={() => setPayMode(key)} style={{
-                    flex:1, padding: "5px 0",
-                    borderRadius:8,
+                    flex:1, padding: "3px 0",
+                    borderRadius:7,
                     border: payMode === key ? "2px solid #7C5CFC" : "1.5px solid #E5E3EE",
                     background: payMode === key ? "#EDE9FF" : "#fff",
                     color: payMode === key ? "#7C5CFC" : "#374151",
                     fontWeight: payMode === key ? 700 : 500,
-                    fontSize:11.5, cursor:"pointer",
-                    display:"flex", alignItems:"center", justifyContent:"center", gap:4,
+                    fontSize:11, cursor:"pointer",
+                    display:"flex", alignItems:"center", justifyContent:"center", gap:3,
                   }}>
-                    <span style={{ fontSize:16 }}>{icon}</span>
+                    <span style={{ fontSize:13 }}>{icon}</span>
                     {label}
                   </button>
                 ))}
@@ -568,8 +560,8 @@ export default function Sales() {
                   width:"100%",
                   background: submitting || cart.length === 0 ? "#ccc" : "#7C5CFC",
                   color:"#fff",
-                  border:"none", borderRadius:12, padding: "5px 0",
-                  fontSize:14, fontWeight:700,
+                  border:"none", borderRadius:10, padding: "5px 0",
+                  fontSize:13, fontWeight:700,
                   cursor: submitting || cart.length === 0 ? "not-allowed" : "pointer",
                 }}
               >
