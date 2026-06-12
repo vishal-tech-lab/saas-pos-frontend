@@ -458,19 +458,17 @@ export default function Sales() {
                     borderBottom: isSel ? "none" : "1px solid #F3F2F7",
                   }}
                 >
-                  {/* Name + price — truncated, takes available space */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{
-                      fontWeight: isSel ? 700 : 600,
-                      fontSize: 11.5,
-                      color: isSel ? "#7C5CFC" : "#1A1A2E",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      display: "block",
-                    }}>{item.itemname}</span>
-                    <span style={{ fontSize: 10.5, color: "#7C5CFC" }}>{fmt(item.price)}</span>
-                  </div>
+                  {/* Name — truncated, takes available space */}
+                  <span style={{
+                    flex: 1,
+                    minWidth: 0,
+                    fontWeight: isSel ? 700 : 600,
+                    fontSize: 11.5,
+                    color: isSel ? "#7C5CFC" : "#1A1A2E",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}>{item.itemname}</span>
 
                   {/* Qty controls */}
                   <button
