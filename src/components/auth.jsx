@@ -222,7 +222,9 @@ function Auth() {
 
       localStorage.setItem("user", JSON.stringify(data));
       localStorage.setItem("role", data.role);
+localStorage.setItem("branchId",data.branchid);
 
+localStorage.setItem("currentBranch",data.branchname);
       if (data.role === "ROLE_ADMIN" || data.role === "ROLE_MANAGER") {
         navigate("/dashboard");
       } else if (data.role === "ROLE_CASHIER") {
