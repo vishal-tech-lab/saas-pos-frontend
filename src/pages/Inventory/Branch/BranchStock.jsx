@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Package, Search, Download, ChevronDown, Eye, SlidersHorizontal, Trash2,
+  Package, Search, Download, ChevronDown, Eye,
   TrendingDown, AlertTriangle, Warehouse, BarChart3,
-  RefreshCw, X, Save, BoxSelect, Layers, ShieldAlert, CheckCircle2,
-  Circle, Clock, Filter, Building2, Tag, Hash, FileText,
+  RefreshCw, X, BoxSelect, Layers, ShieldAlert,
+  Circle, Clock, Filter, Building2, Tag,
   ArrowUpDown, ChefHat, Coffee, Drumstick, Soup, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import instances from "../../../components/axios";
@@ -78,11 +78,7 @@ export default function BranchStock() {
   const [branchF, setBranchF]           = useState("All Branches");
   const [catF, setCatF]                 = useState("All Categories");
   const [statusF, setStatusF]           = useState("All Status");
-  const [adjustModal, setAdjustModal]   = useState(null);
   const [viewModal, setViewModal]       = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [adjustForm, setAdjustForm]     = useState({ qty: "", reason: "" });
-  const [adjustSaved, setAdjustSaved]   = useState(false);
   const [sortCol, setSortCol]           = useState("product");
   const [sortDir, setSortDir]           = useState("asc");
   const [page, setPage]                 = useState(1);
@@ -119,17 +115,6 @@ export default function BranchStock() {
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
-    try {
-      await instances.delete(`/branch-stock/${deleteTarget.id}`);
-      await fetchStock();
-      setDeleteTarget(null);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const filtered = useMemo(() => {
     let d = stock;
     if (search)                     d = d.filter(r => r.product.toLowerCase().includes(search.toLowerCase()) || r.branch.toLowerCase().includes(search.toLowerCase()));
@@ -153,28 +138,6 @@ export default function BranchStock() {
   const sort = (col) => {
     setSortCol(col);
     setSortDir(d => col === sortCol ? (d === "asc" ? "desc" : "asc") : "asc");
-  };
-
-  const handleAdjust = async () => {
-    if (!adjustForm.qty || isNaN(adjustForm.qty)) return;
-    const delta = parseInt(adjustForm.qty);
-    const newQty = Math.max(0, adjustModal.qty + delta);
-    try {
-      await instances.put(`/branch-stock/${adjustModal.id}`, { qty: newQty });
-      setStock(prev => prev.map(s => {
-        if (s.id !== adjustModal.id) return s;
-        const status = newQty === 0 ? "Out Of Stock" : newQty <= 5 ? "Low Stock" : "In Stock";
-        return { ...s, qty: newQty, status, updated: new Date().toLocaleString() };
-      }));
-      setAdjustSaved(true);
-      setTimeout(() => {
-        setAdjustSaved(false);
-        setAdjustModal(null);
-        setAdjustForm({ qty: "", reason: "" });
-      }, 1200);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   const STATS = [
@@ -435,20 +398,6 @@ export default function BranchStock() {
                             >
                               <Eye className="w-3 h-3" /> View
                             </button>
-                            <button
-                              onClick={() => { setAdjustModal(row); setAdjustForm({ qty: "", reason: "" }); }}
-                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-[#C4B5FD] bg-[#F4F3FF] text-[#7C5CFC] text-xs font-semibold hover:bg-purple-100 transition-all"
-                              title="Adjust Stock"
-                            >
-                              <SlidersHorizontal className="w-3 h-3" /> Adjust
-                            </button>
-                            <button
-                              onClick={() => setDeleteTarget(row)}
-                              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-red-200 bg-red-50 text-red-500 text-xs font-semibold hover:bg-red-100 transition-all"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-3 h-3" /> Delete
-                            </button>
                           </div>
                         </td>
                       </motion.tr>
@@ -501,199 +450,6 @@ export default function BranchStock() {
           </div>
         </motion.div>
       </div>
-
-      {/* ── ADJUST STOCK MODAL ── */}
-      <AnimatePresence>
-        {adjustModal && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
-            onClick={() => setAdjustModal(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 280, damping: 26 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl bg-white border border-gray-200 shadow-2xl overflow-hidden"
-            >
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-[#EDE9FE] bg-[#F4F3FF] flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#7C5CFC] flex items-center justify-center shadow-sm">
-                    <SlidersHorizontal className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-gray-900">Adjust Stock</h2>
-                    <p className="text-xs text-slate-500">Update inventory quantity</p>
-                  </div>
-                </div>
-                <button onClick={() => setAdjustModal(null)}
-                  className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="p-6 space-y-4">
-                {/* Product info */}
-                {(() => {
-                  const m = CAT_META[(adjustModal.category || "").toUpperCase()] ?? DEFAULT_CAT;
-                  const I = m.icon;
-                  return (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
-                      <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${m.badgeBg} ${m.badgeBorder}`}>
-                        <I className={`w-4 h-4 ${m.iconColor}`} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{adjustModal.product}</p>
-                        <p className="text-xs text-slate-500">{adjustModal.branch} · Current: <span className="text-gray-900 font-semibold">{adjustModal.qty} units</span></p>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                {/* Read-only fields */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Product Name</label>
-                  <div className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm text-slate-500">{adjustModal.product}</div>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Branch</label>
-                  <div className="px-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm text-slate-500">{adjustModal.branch}</div>
-                </div>
-
-                {/* Qty */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">
-                    Quantity Adjustment <span className="text-slate-400 normal-case">(use + / − values)</span>
-                  </label>
-                  <div className="relative">
-                    <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="number"
-                      value={adjustForm.qty}
-                      onChange={e => setAdjustForm({ ...adjustForm, qty: e.target.value })}
-                      placeholder="e.g. +50 or -10"
-                      className="w-full pl-9 pr-4 py-2.5 border border-[#E2E8F0] rounded-xl text-sm text-gray-800 placeholder-slate-400 focus:outline-none focus:border-[#7C5CFC] focus:ring-2 focus:ring-purple-100 transition-all"
-                    />
-                  </div>
-                  {adjustForm.qty && !isNaN(adjustForm.qty) && (
-                    <p className="text-xs text-slate-500 mt-1.5">
-                      New qty:{" "}
-                      <span className={`font-bold ${Math.max(0, adjustModal.qty + parseInt(adjustForm.qty)) <= 5 ? "text-amber-600" : "text-emerald-600"}`}>
-                        {Math.max(0, adjustModal.qty + parseInt(adjustForm.qty))} units
-                      </span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Reason */}
-                <div>
-                  <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Reason</label>
-                  <div className="relative">
-                    <FileText className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
-                    <textarea
-                      value={adjustForm.reason}
-                      onChange={e => setAdjustForm({ ...adjustForm, reason: e.target.value })}
-                      placeholder="e.g. New delivery arrived, wastage, transfer…"
-                      rows={2}
-                      className="w-full pl-9 pr-4 py-2.5 border border-[#E2E8F0] rounded-xl text-sm text-gray-800 placeholder-slate-400 focus:outline-none focus:border-[#7C5CFC] focus:ring-2 focus:ring-purple-100 transition-all resize-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3 px-6 pb-6">
-                <button onClick={() => setAdjustModal(null)}
-                  className="flex-1 py-2.5 rounded-xl text-sm font-semibold border border-gray-200 text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all bg-white">
-                  Cancel
-                </button>
-                <motion.button
-                  onClick={handleAdjust} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white shadow-md transition-all ${
-                    adjustSaved
-                      ? "bg-emerald-500 shadow-emerald-100"
-                      : "bg-[#7C5CFC] hover:bg-[#6046E0] shadow-purple-200"
-                  }`}
-                >
-                  <AnimatePresence mode="wait">
-                    {adjustSaved
-                      ? <motion.span key="ok" initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex items-center gap-2">
-                          <CheckCircle2 className="w-4 h-4" /> Updated!
-                        </motion.span>
-                      : <motion.span key="save" className="flex items-center gap-2">
-                          <Save className="w-4 h-4" /> Update Stock
-                        </motion.span>
-                    }
-                  </AnimatePresence>
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── DELETE CONFIRM MODAL ── */}
-      <AnimatePresence>
-        {deleteTarget && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
-            onClick={() => setDeleteTarget(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 280, damping: 26 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm rounded-2xl bg-white border border-gray-200 shadow-2xl overflow-hidden"
-            >
-              <div className="px-6 py-4 border-b border-red-100 bg-red-50 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-red-500 flex items-center justify-center shadow-sm">
-                    <Trash2 className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-gray-900">Delete Stock Item</h2>
-                    <p className="text-xs text-slate-500">This action cannot be undone</p>
-                  </div>
-                </div>
-                <button onClick={() => setDeleteTarget(null)}
-                  className="w-8 h-8 rounded-lg bg-white border border-gray-200 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="p-6">
-                {(() => {
-                  const m = CAT_META[(deleteTarget.category || "").toUpperCase()] ?? DEFAULT_CAT;
-                  const I = m.icon;
-                  return (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-100 mb-5">
-                      <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${m.badgeBg} ${m.badgeBorder}`}>
-                        <I className={`w-4 h-4 ${m.iconColor}`} />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{deleteTarget.product}</p>
-                        <p className="text-xs text-slate-500">{deleteTarget.branch} · Qty: <span className="font-semibold text-gray-900">{deleteTarget.qty}</span></p>
-                      </div>
-                    </div>
-                  );
-                })()}
-                <div className="flex gap-3">
-                  <button onClick={() => setDeleteTarget(null)}
-                    className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:border-slate-300 transition-all bg-white">
-                    Cancel
-                  </button>
-                  <motion.button
-                    onClick={handleDeleteConfirm} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-bold shadow-md shadow-red-100 transition-all">
-                    <Trash2 className="w-4 h-4" /> Delete
-                  </motion.button>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ── VIEW MODAL ── */}
       <AnimatePresence>
@@ -755,16 +511,6 @@ export default function BranchStock() {
                   </div>
                   <StockBadge status={viewModal.status} />
                 </div>
-              </div>
-
-              <div className="px-6 pb-5">
-                <button
-                  onClick={() => { setViewModal(null); setAdjustModal(viewModal); setAdjustForm({ qty: "", reason: "" }); }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
-                  style={{ background: "linear-gradient(135deg,#7C5CFC,#6046E0)", boxShadow: "0 4px 14px rgba(124,92,252,.35)" }}
-                >
-                  <SlidersHorizontal className="w-4 h-4" /> Adjust Stock
-                </button>
               </div>
             </motion.div>
           </motion.div>

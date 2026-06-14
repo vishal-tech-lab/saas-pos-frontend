@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import instances from "../../components/axios";
+import { FEATURES } from "../../utils/features";
 import {
   GitBranch, Warehouse, ChefHat, Building2, Search, Plus,
   Edit3, Trash2, Eye, X, Phone, MapPin, CheckCircle2,
@@ -68,6 +69,9 @@ export default function Branches() {
   const [filterType, setFilterType] = useState("ALL");
   const [toast, setToast] = useState(null);
 
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const features = FEATURES[user.plan] || [];
+
   useEffect(() => {
     instances.defaults.headers.common["X-TenantID"] = "tenant_test";
   }, []);
@@ -110,13 +114,26 @@ export default function Branches() {
     try {
       if (!form.branchname || !form.address || !form.phone) return;
       if (editTarget) {
-        await instances.put(`/branches/${editTarget}`, form);
+        const response = await instances.put(
+          `/branches/${editTarget}`,
+          form
+        );
+        setBranches(prev =>
+          prev.map(b =>
+            b.branchid === editTarget
+              ? response.data
+              : b
+          )
+        );
         setToast("Branch updated successfully");
       } else {
-        await instances.post("/branches/register", form);
+        const response = await instances.post(
+          "/branches/register",
+          form
+        );
+        setBranches(prev => [response.data, ...prev]);
         setToast("Branch created successfully");
       }
-      fetchBranches();
       setModalOpen(false);
     } catch (error) {
       console.log(error);
@@ -127,8 +144,8 @@ export default function Branches() {
   const handleDelete = async (id) => {
     try {
       await instances.delete(`/branches/${id}`);
+      setBranches(prev => prev.filter(b => b.branchid !== id));
       setToast("Branch deleted successfully");
-      fetchBranches();
       setDeleteConfirm(null);
     } catch (error) {
       console.log(error);
@@ -151,9 +168,10 @@ export default function Branches() {
         @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
         @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         * { box-sizing: border-box; }
+        table th, table td { vertical-align: middle; }
+        button { line-height: 1; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: #C7BCFC; border-radius: 4px; }
         .branch-row:hover td { background: #7C5CFC06 !important; }
-        .action-btn { opacity: 1; transition: opacity .15s; }
         .filter-btn { transition: all .15s; }
         .filter-btn:hover { border-color: #7C5CFC !important; color: #7C5CFC !important; }
       `}</style>
@@ -210,6 +228,7 @@ export default function Branches() {
               </div>
               {/* Add button */}
               <button
+                type="button"
                 onClick={openAdd}
                 style={{
                   padding: "11px 20px", borderRadius: 12, border: "none",
@@ -364,70 +383,77 @@ export default function Branches() {
                         </td>
 
                         {/* Actions */}
-                        <td style={{ padding: "14px 18px", textAlign: "center" }}>
-                          <div className="action-btn" style={{ display: "flex", gap: 6, justifyContent: "center" }}>
+                        <td style={{ padding: "14px 18px", textAlign: "center", verticalAlign: "middle" }}>
+                          <div style={{ display: "flex",  justifyContent: "center", alignItems: "center", gap: 8 }}>
+                           
                             <button
-                              onClick={() => setViewTarget(b)}
-                              style={{
-                                padding: "7px 12px", borderRadius: 8,
-                                border: "1.5px solid #BAE6FD", background: "#F0F9FF",
-                                color: "#0EA5E9", fontSize: 12, fontWeight: 600,
-                                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                                display: "flex", alignItems: "center", gap: 4,
-                              }}
-                            >
-                              <Eye style={{ width: 13, height: 13 }} /> View
-                            </button>
-                            <button
+                              type="button"
                               onClick={() => openEdit(b)}
                               style={{
-                                padding: "7px 12px", borderRadius: 8,
+                                height: 34, padding: "0 14px", borderRadius: 10,
                                 border: "1.5px solid #E2E8F0", background: "#F8FAFC",
                                 color: "#374151", fontSize: 12, fontWeight: 600,
                                 cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                                display: "flex", alignItems: "center", gap: 4,
+                                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                whiteSpace: "nowrap",
+                                lineHeight: 1,
                               }}
                             >
                               <Edit3 style={{ width: 13, height: 13 }} /> Edit
                             </button>
+                            {features.includes("KITCHEN_DISPLAY") && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
+                                  if (!tenant) return;
+                                  window.open(`/kitchen/${tenant}/${b.branchid}`, "_blank");
+                                }}
+                                style={{
+                                  height: 34, padding: "0 14px", borderRadius: 10,
+                                  border: "1.5px solid #FEF3C7", background: "#FFFBEB",
+                                  color: "#D97706", fontSize: 12, fontWeight: 600,
+                                  cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                                  display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                  whiteSpace: "nowrap",
+                                  lineHeight: 1,
+                                }}
+                              >
+                                🍳 Kitchen
+                              </button>
+                            )}
+                            {features.includes("CUSTOMER_DISPLAY") && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
+                                  if (!tenant) return;
+                                  window.open(`/display/${tenant}/${b.branchid}`, "_blank");
+                                }}
+                                style={{
+                                  height: 34, padding: "0 14px", borderRadius: 10,
+                                  border: "1.5px solid #DBEAFE", background: "#EFF6FF",
+                                  color: "#2563EB", fontSize: 12, fontWeight: 600,
+                                  cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
+                                  display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                  whiteSpace: "nowrap",
+                                  lineHeight: 1,
+                                }}
+                              >
+                                📺 Display
+                              </button>
+                            )}
                             <button
-                              onClick={() => {
-                                const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
-                                if (!tenant) return;
-                                window.open(`/kitchen/${tenant}/${b.branchid}`, "_blank");
-                              }}
-                              style={{
-                                padding: "7px 12px", borderRadius: 8,
-                                border: "1.5px solid #FEF3C7", background: "#FFFBEB",
-                                color: "#D97706", fontSize: 12, fontWeight: 600,
-                                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                              }}
-                            >
-                              🍳 Kitchen
-                            </button>
-                            <button
-                              onClick={() => {
-                                const tenant = JSON.parse(localStorage.getItem("user"))?.schema;
-                                if (!tenant) return;
-                                window.open(`/display/${tenant}/${b.branchid}`, "_blank");
-                              }}
-                              style={{
-                                padding: "7px 12px", borderRadius: 8,
-                                border: "1.5px solid #DBEAFE", background: "#EFF6FF",
-                                color: "#2563EB", fontSize: 12, fontWeight: 600,
-                                cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                              }}
-                            >
-                              📺 Display
-                            </button>
-                            <button
+                              type="button"
                               onClick={() => setDeleteConfirm(b)}
                               style={{
-                                padding: "7px 12px", borderRadius: 8,
+                                height: 34, padding: "0 14px", borderRadius: 10,
                                 border: "1.5px solid #FEE2E2", background: "#FEF2F2",
                                 color: "#EF4444", fontSize: 12, fontWeight: 600,
                                 cursor: "pointer", fontFamily: "'DM Sans', sans-serif",
-                                display: "flex", alignItems: "center", gap: 4,
+                                display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                whiteSpace: "nowrap",
+                                lineHeight: 1,
                               }}
                             >
                               <Trash2 style={{ width: 13, height: 13 }} /> Delete
@@ -612,11 +638,39 @@ export default function Branches() {
               onClick={e => e.stopPropagation()}
               style={{ background: "#fff", borderRadius: 18, width: "100%", maxWidth: 380, padding: 28, boxShadow: "0 24px 64px rgba(0,0,0,0.14)", fontFamily: "'DM Sans', sans-serif" }}
             >
-              <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#FEE2E2", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+              <div style={{
+    width: 48,
+    height: 48,
+    borderRadius: "50%",
+    background: "#FEE2E2",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+    marginLeft: "auto",
+    marginRight: "auto"
+  }}>
                 <AlertCircle style={{ width: 24, height: 24, color: "#EF4444" }} />
               </div>
-              <div style={{ fontWeight: 700, fontSize: 18, color: "#0F172A", marginBottom: 8 }}>Delete Branch</div>
-              <div style={{ color: "#64748B", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+<div
+  style={{
+    fontWeight: 700,
+    fontSize: 18,
+    color: "#0F172A",
+    marginBottom: 8,
+    textAlign: "center"
+  }}
+>
+  Delete Branch
+</div>             <div
+  style={{
+    color: "#64748B",
+    fontSize: 14,
+    marginBottom: 24,
+    lineHeight: 1.6,
+    textAlign: "center"
+  }}
+>
                 Are you sure you want to remove <strong style={{ color: "#0F172A" }}>"{deleteConfirm.branchname}"</strong>? This action cannot be undone.
               </div>
               <div style={{ display: "flex", gap: 10 }}>
@@ -635,93 +689,7 @@ export default function Branches() {
       </AnimatePresence>
 
       {/* ── VIEW MODAL ── */}
-      <AnimatePresence>
-        {viewTarget && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: "fixed", inset: 0, background: "rgba(15,15,30,0.45)", zIndex: 7000, display: "flex", alignItems: "center", justifyContent: "center", padding: 16, backdropFilter: "blur(4px)" }}
-            onClick={() => setViewTarget(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.92, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              style={{ background: "#fff", borderRadius: 20, width: "100%", maxWidth: 420, boxShadow: "0 24px 80px rgba(124,92,252,0.22)", fontFamily: "'DM Sans', sans-serif", overflow: "hidden" }}
-            >
-              {(() => {
-                const TC = TYPE_CONFIG[viewTarget.branchtype];
-                return (
-                  <>
-                    {/* View Header */}
-                    <div style={{ padding: "22px 24px 18px", borderBottom: "1px solid #F1F5F9", background: TC.bg, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                        <div style={{ width: 42, height: 42, borderRadius: 12, background: "#fff", border: `1px solid ${TC.border}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <TC.icon style={{ width: 20, height: 20, color: TC.color }} />
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 800, fontSize: 17, color: "#0F172A" }}>{viewTarget.branchname}</div>
-                          <span style={{ fontSize: 12, fontWeight: 600, color: TC.color }}>{TC.label}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setViewTarget(null)}
-                        style={{ width: 32, height: 32, borderRadius: "50%", border: "none", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#64748B" }}
-                      >
-                        <X style={{ width: 16, height: 16 }} />
-                      </button>
-                    </div>
-
-                    {/* View Body */}
-                    <div style={{ padding: "20px 24px" }}>
-                      {[
-                        { label: "Address", value: viewTarget.address, Icon: MapPin },
-                        { label: "Phone", value: viewTarget.phone, Icon: Phone },
-                      ].map(f => (
-                        <div key={f.label} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 14px", borderRadius: 10, background: "#F8FAFC", border: "1px solid #F1F5F9", marginBottom: 10 }}>
-                          <f.Icon style={{ width: 15, height: 15, color: "#94A3B8", marginTop: 2, flexShrink: 0 }} />
-                          <div>
-                            <p style={{ fontSize: 11, color: "#94A3B8", margin: "0 0 3px", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.4 }}>{f.label}</p>
-                            <p style={{ fontSize: 14, color: "#0F172A", margin: 0, fontWeight: 500 }}>{f.value}</p>
-                          </div>
-                        </div>
-                      ))}
-
-                      {/* Status row */}
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 14px", borderRadius: 10, background: "#F8FAFC", border: "1px solid #F1F5F9", marginBottom: 20 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                          <Activity style={{ width: 15, height: 15, color: "#94A3B8" }} />
-                          <div>
-                            <p style={{ fontSize: 11, color: "#94A3B8", margin: "0 0 3px", fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.4 }}>Status</p>
-                            <p style={{ fontSize: 14, color: "#0F172A", margin: 0, fontWeight: 500 }}>{viewTarget.status}</p>
-                          </div>
-                        </div>
-                        {viewTarget.status === "ACTIVE"
-                          ? <CheckCircle2 style={{ width: 20, height: 20, color: "#10B981" }} />
-                          : <XCircle style={{ width: 20, height: 20, color: "#EF4444" }} />
-                        }
-                      </div>
-
-                      {/* Edit button */}
-                      <button
-                        onClick={() => { setViewTarget(null); openEdit(viewTarget); }}
-                        style={{
-                          width: "100%", padding: 13, borderRadius: 12, border: "none",
-                          background: "linear-gradient(135deg, #7C5CFC 0%, #6046E0 100%)",
-                          color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer",
-                          fontFamily: "'DM Sans', sans-serif",
-                          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                          boxShadow: "0 4px 16px rgba(124,92,252,0.32)",
-                        }}
-                      >
-                        <Edit3 style={{ width: 15, height: 15 }} /> Edit Branch
-                      </button>
-                    </div>
-                  </>
-                );
-              })()}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+     
 
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </>

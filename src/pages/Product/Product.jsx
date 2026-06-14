@@ -29,7 +29,6 @@ const DEFAULT_CAT = {
   badgeBorder: "border-purple-200",
   badgeText: "text-purple-700",
 };
-
 function getCatStyle(cat) {
   return CAT_STYLE[(cat || "").toUpperCase()] ?? DEFAULT_CAT;
 }
@@ -69,10 +68,10 @@ function CategoryPicker({ categories, selected, onChange, onAddCategory }) {
 
   const popular = categories.slice(0, 6);
   const popularFiltered = popular.filter(c =>
-    c.itemcategoryname.toLowerCase().includes(search.toLowerCase())
+    c.itemcategoryname.toLowerCase().startsWith(search.toLowerCase())
   );
   const allFiltered = categories.filter(c =>
-    c.itemcategoryname.toLowerCase().includes(search.toLowerCase())
+    c.itemcategoryname.toLowerCase().startsWith(search.toLowerCase())
   );
   const selectedCat = categories.find(c => c.itemcategoryname === selected);
 
@@ -249,14 +248,21 @@ function DeleteConfirm({ product, onConfirm, onCancel }) {
 
 // ─── PRODUCT MODAL (Add / Edit) ───────────────────────────────────────────────
 
-const EMPTY_FORM = { itemname: "", price: "", category: "" };
-
+const EMPTY_FORM = () => ({
+  itemname: "",
+  price: "",
+  category: ""
+});
 function ProductModal({ editProduct, categories, onAddCategory, onClose, onSave }) {
-  const [form, setForm]     = useState(
-    editProduct
-      ? { itemname: editProduct.itemname, price: String(editProduct.price ?? ""), category: editProduct.category ?? "" }
-      : EMPTY_FORM
-  );
+ const [form, setForm] = useState(
+  editProduct
+    ? {
+        itemname: editProduct.itemname,
+        price: String(editProduct.price ?? ""),
+        category: editProduct.category ?? ""
+      }
+    : EMPTY_FORM()
+);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [done, setDone]     = useState(false);
@@ -270,15 +276,34 @@ function ProductModal({ editProduct, categories, onAddCategory, onClose, onSave 
     setErrors(e);
     return !Object.keys(e).length;
   };
+useEffect(() => {
 
+  if (!editProduct) {
+
+    setForm(
+      EMPTY_FORM()
+    );
+
+  }
+
+}, [done]);
   const handleSubmit = async (ev) => {
     ev.preventDefault();
     if (!validate()) return;
     setSaving(true);
     try {
-      await onSave({ ...form, price: Number(form.price) || 0 });
+      await onSave({
+        ...form,
+        price: Number(form.price) || 0
+      });
+
       setDone(true);
-      setTimeout(() => { setDone(false); onClose(); }, 1200);
+      setForm(EMPTY_FORM());
+      setErrors({});
+
+      setTimeout(() => {
+        setDone(false);
+      }, 1000);
     } catch (e) {
       console.log(e);
     } finally {
@@ -464,6 +489,16 @@ export default function Product() {
     }
   };
 
+  const refreshProducts = async () => {
+    try {
+      const prods = await getProducts();
+      setProducts(Array.isArray(prods) ? prods : []);
+    } catch (e) {
+      console.log(e);
+      showToast("Failed to refresh products", "error");
+    }
+  };
+
   useEffect(() => { load(); }, []);
   useEffect(() => { setPage(1); }, [search, catFilter]);
 
@@ -475,7 +510,7 @@ export default function Product() {
       await createProduct(form);
       showToast("Product added successfully");
     }
-    await load();
+    await refreshProducts();
   };
 
   const handleDelete = async () => {
@@ -483,7 +518,7 @@ export default function Product() {
       await deleteProduct(deleteTarget.itemid);
       showToast("Product deleted");
       setDeleteTarget(null);
-      await load();
+      await refreshProducts();
     } catch (e) {
       showToast("Failed to delete", "error");
     }
@@ -503,8 +538,8 @@ export default function Product() {
   const filtered = useMemo(() =>
     products.filter(p => {
       const matchSearch =
-        (p.itemname || "").toLowerCase().includes(search.toLowerCase()) ||
-        (p.category || "").toLowerCase().includes(search.toLowerCase());
+        (p.itemname || "").toLowerCase().startsWith(search.toLowerCase()) ||
+        (p.category || "").toLowerCase().startsWith(search.toLowerCase());
       const matchCat = catFilter === "All" || p.category === catFilter;
       return matchSearch && matchCat;
     }),

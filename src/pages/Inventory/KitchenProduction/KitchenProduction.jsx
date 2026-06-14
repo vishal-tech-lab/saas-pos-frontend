@@ -8,9 +8,8 @@ import {
   AlertCircle, CheckCircle2, Package, Sparkles
 } from "lucide-react";
 
-const EMPTY_FORM = { kitchen: "", product: "", qty: "", notes: "" };
+const EMPTY_FORM = { branchId: "", productId: "", qty: "", notes: "" };
 const TODAY = new Date().toISOString().split("T")[0];
-const POPULAR_BRANCH_COUNT = 5;
 
 /* ─────────────────────────────────────────
    STAT PILL  (matches User Management style)
@@ -57,57 +56,57 @@ function Badge({ product }) {
   );
 }
 
-/* ─────────────────────────────────────────
-   BRANCH PICKER  (mirrors UserManagement)
-───────────────────────────────────────── */
 function BranchPicker({ branches = [], selected, onChange, error }) {
   const [query, setQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [modalQuery, setModalQuery] = useState("");
+  const inputRef = useRef(null);
 
-  const popular = branches.slice(0, POPULAR_BRANCH_COUNT);
-  const popularFiltered = popular.filter((b) =>
-    b.branchname.toLowerCase().includes(query.toLowerCase())
-  );
-  const allFiltered = branches.filter((b) =>
-    b.branchname.toLowerCase().includes(modalQuery.toLowerCase())
-  );
+  const selectedBranch = selected ? branches.find((b) => b.id === selected) : null;
 
-  const selectedBranch = selected
-    ? branches.find((b) => b.branchname === selected)
-    : null;
+  useEffect(() => {
+    if (selectedBranch) {
+      setQuery(selectedBranch.name);
+    } else {
+      setQuery("");
+    }
+  }, [selectedBranch]);
 
-  function pick(branch) {
-    onChange(branch.branchname);
+  const popular = branches.slice(0, 6);
+  const popularFiltered = popular.filter((b) => b.name.toLowerCase().includes(query.toLowerCase()));
+  const allFiltered = branches.filter((b) => b.name.toLowerCase().includes(modalQuery.toLowerCase()));
+
+  const pick = (branch) => {
+    onChange(branch.id);
+    setQuery(branch.name);
     setModalOpen(false);
     setModalQuery("");
-  }
+  };
 
   return (
     <>
-      <div>
-        <div
+      <div style={{ marginBottom: 18 }}>
+        <label
           style={{
-            fontSize: 13,
-            fontWeight: 600,
-            color: "#374151",
+            fontSize: 12,
+            fontWeight: 700,
+            color: "#334155",
+            display: "block",
             marginBottom: 8,
-            letterSpacing: 0.3,
+            letterSpacing: 0.8,
+            textTransform: "uppercase",
           }}
         >
-          Branch / Warehouse{" "}
+          Kitchen Branch
           {error && (
-            <span style={{ color: "#EF4444", fontWeight: 400 }}>
-              *required
-            </span>
+            <span style={{ color: "#EF4444", fontWeight: 400, marginLeft: 6 }}>*required</span>
           )}
-        </div>
+        </label>
 
         {selectedBranch && (
           <div
             style={{
-              background:
-                "linear-gradient(135deg, #7C5CFC18 0%, #7C5CFC08 100%)",
+              background: "linear-gradient(135deg, #7C5CFC18 0%, #7C5CFC08 100%)",
               border: "1.5px solid #7C5CFC55",
               borderRadius: 10,
               padding: "10px 14px",
@@ -118,20 +117,20 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
             }}
           >
             <span style={{ color: "#7C5CFC", fontSize: 16 }}>✓</span>
-            <span
-              style={{ fontWeight: 600, color: "#7C5CFC", fontSize: 14 }}
-            >
-              {selectedBranch.branchname}
-            </span>
+            <span style={{ fontWeight: 600, color: "#7C5CFC", fontSize: 14 }}>{selectedBranch.name}</span>
             <button
-              onClick={() => onChange("")}
+              type="button"
+              onClick={() => {
+                onChange(null);
+                setQuery("");
+              }}
               style={{
                 marginLeft: "auto",
                 background: "none",
                 border: "none",
                 color: "#94A3B8",
                 cursor: "pointer",
-                fontSize: 20,
+                fontSize: 18,
                 lineHeight: 1,
               }}
             >
@@ -148,26 +147,29 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
               top: "50%",
               transform: "translateY(-50%)",
               color: "#94A3B8",
-              fontSize: 15,
             }}
           >
             🔍
           </span>
           <input
+            ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search branch…"
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (selectedBranch) onChange(null);
+            }}
+            placeholder="Search branch..."
             style={{
               width: "100%",
-              padding: "10px 12px 10px 36px",
-              border: `1.5px solid ${error ? "#EF4444" : "#E2E8F0"}`,
-              borderRadius: 10,
+              padding: "14px 12px 14px 36px",
+              border: `1px solid ${error ? "#EF4444" : "#E2E8F0"}`,
+              borderRadius: 18,
               fontSize: 14,
               boxSizing: "border-box",
               outline: "none",
               fontFamily: "'DM Sans', sans-serif",
               color: "#0F172A",
-              background: "#FFFFFF",
+              background: "#F8FAFC",
             }}
             onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
             onBlur={(e) =>
@@ -176,23 +178,18 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
           />
         </div>
 
-        <div
-          style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}
-        >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 8 }}>
           {popularFiltered.map((b) => (
             <button
-              key={b.branchid}
+              key={b.id}
+              type="button"
               onClick={() => pick(b)}
               style={{
                 padding: "8px 14px",
                 borderRadius: 10,
-                border:
-                  selected === b.branchname
-                    ? "1.5px solid #7C5CFC"
-                    : "1.5px solid #E2E8F0",
-                background:
-                  selected === b.branchname ? "#7C5CFC" : "#F8FAFC",
-                color: selected === b.branchname ? "#fff" : "#374151",
+                border: selected === b.id ? "1.5px solid #7C5CFC" : "1.5px solid #E2E8F0",
+                background: selected === b.id ? "#7C5CFC" : "#F8FAFC",
+                color: selected === b.id ? "#fff" : "#374151",
                 fontSize: 13,
                 fontWeight: 500,
                 cursor: "pointer",
@@ -200,12 +197,13 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                 transition: "all .15s",
               }}
             >
-              {b.branchname}
+              {b.name}
             </button>
           ))}
         </div>
 
         <button
+          type="button"
           onClick={() => setModalOpen(true)}
           style={{
             background: "none",
@@ -222,14 +220,13 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
         </button>
       </div>
 
-      {/* Branch Modal */}
       {modalOpen && (
         <div
           style={{
             position: "fixed",
             inset: 0,
             background: "rgba(15,15,30,0.55)",
-            zIndex: 9000,
+            zIndex: 8000,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -247,24 +244,11 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
               boxShadow: "0 24px 64px rgba(124,92,252,0.18)",
               overflow: "hidden",
               fontFamily: "'DM Sans', sans-serif",
+              animation: "scaleIn .18s ease",
             }}
           >
-            <div
-              style={{
-                padding: "20px 20px 0",
-                borderBottom: "1px solid #F1F5F9",
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: 700,
-                  fontSize: 17,
-                  color: "#0F172A",
-                  marginBottom: 14,
-                }}
-              >
-                Select Branch / Warehouse
-              </div>
+            <div style={{ padding: "20px 20px 0", borderBottom: "1px solid #F1F5F9" }}>
+              <div style={{ fontWeight: 700, fontSize: 17, color: "#0F172A", marginBottom: 14 }}>Select Branch</div>
               <div style={{ position: "relative", marginBottom: 14 }}>
                 <span
                   style={{
@@ -281,7 +265,7 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                   autoFocus
                   value={modalQuery}
                   onChange={(e) => setModalQuery(e.target.value)}
-                  placeholder="Search branch…"
+                  placeholder="Search branch..."
                   style={{
                     width: "100%",
                     padding: "10px 12px 10px 36px",
@@ -291,8 +275,6 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                     boxSizing: "border-box",
                     outline: "none",
                     fontFamily: "'DM Sans', sans-serif",
-                    color: "#0F172A",
-                    background: "#FFFFFF",
                   }}
                 />
               </div>
@@ -300,13 +282,13 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
             <div style={{ maxHeight: 300, overflowY: "auto", padding: "8px 0" }}>
               {allFiltered.map((b) => (
                 <button
-                  key={b.branchid}
+                  key={b.id}
+                  type="button"
                   onClick={() => pick(b)}
                   style={{
                     width: "100%",
                     padding: "13px 20px",
-                    background:
-                      selected === b.branchname ? "#7C5CFC0D" : "transparent",
+                    background: selected === b.id ? "#7C5CFC0D" : "transparent",
                     border: "none",
                     textAlign: "left",
                     cursor: "pointer",
@@ -315,26 +297,283 @@ function BranchPicker({ branches = [], selected, onChange, error }) {
                     gap: 12,
                     fontFamily: "'DM Sans', sans-serif",
                     fontSize: 14,
-                    color: selected === b.branchname ? "#7C5CFC" : "#1E293B",
-                    fontWeight: selected === b.branchname ? 600 : 400,
+                    color: selected === b.id ? "#7C5CFC" : "#1E293B",
+                    fontWeight: selected === b.id ? 600 : 400,
                   }}
                 >
-                  {selected === b.branchname && (
-                    <span style={{ color: "#7C5CFC", fontWeight: 700 }}>✓</span>
-                  )}
-                  {b.branchname}
+                  {selected === b.id && <span style={{ color: "#7C5CFC", fontWeight: 700 }}>✓</span>}
+                  {b.name}
                 </button>
               ))}
               {allFiltered.length === 0 && (
-                <div
+                <div style={{ padding: "20px", textAlign: "center", color: "#94A3B8", fontSize: 14 }}>
+                  No branches found
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+function ProductPicker({ products = [], selected, onChange, error }) {
+  const [query, setQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalQuery, setModalQuery] = useState("");
+  const inputRef = useRef(null);
+
+  const selectedProduct = selected ? products.find((p) => p.id === selected) : null;
+
+  useEffect(() => {
+    if (selectedProduct) {
+      setQuery(selectedProduct.name);
+    } else {
+      setQuery("");
+    }
+  }, [selectedProduct]);
+
+  const popular = products.slice(0, 6);
+  const popularFiltered = popular.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+  const allFiltered = products.filter((p) => p.name.toLowerCase().includes(modalQuery.toLowerCase()));
+
+  const pick = (product) => {
+    onChange(product.id);
+    setQuery(product.name);
+    setModalOpen(false);
+    setModalQuery("");
+  };
+
+  return (
+    <>
+      <div>
+        <label
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: "#334155",
+            display: "block",
+            marginBottom: 8,
+            letterSpacing: 0.8,
+            textTransform: "uppercase",
+          }}
+        >
+          Product
+          {error && (
+            <span style={{ color: "#EF4444", fontWeight: 400, marginLeft: 6 }}>*required</span>
+          )}
+        </label>
+
+        {selectedProduct && (
+          <div
+            style={{
+              background: "linear-gradient(135deg, #7C5CFC18 0%, #7C5CFC08 100%)",
+              border: "1.5px solid #7C5CFC55",
+              borderRadius: 10,
+              padding: "10px 14px",
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 10,
+            }}
+          >
+            <span style={{ color: "#7C5CFC", fontSize: 16 }}>✓</span>
+            <span style={{ fontWeight: 600, color: "#7C5CFC", fontSize: 14 }}>{selectedProduct.name}</span>
+            <button
+              type="button"
+              onClick={() => {
+                onChange(null);
+                setQuery("");
+              }}
+              style={{
+                marginLeft: "auto",
+                background: "none",
+                border: "none",
+                color: "#94A3B8",
+                cursor: "pointer",
+                fontSize: 18,
+                lineHeight: 1,
+              }}
+            >
+              ×
+            </button>
+          </div>
+        )}
+
+        <div style={{ position: "relative" }}>
+          <span
+            style={{
+              position: "absolute",
+              left: 18,
+              top: "50%",
+              transform: "translateY(-50%)",
+              color: "#94A3B8",
+              pointerEvents: "none",
+              fontSize: 16,
+            }}
+          >
+            🍛
+          </span>
+          <input
+            ref={inputRef}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (selectedProduct) onChange(null);
+            }}
+            placeholder="Search product..."
+            style={{
+              width: "100%",
+              padding: "14px 18px 14px 44px",
+              border: `1px solid ${error ? "#EF4444" : "#E2E8F0"}`,
+              borderRadius: 18,
+              fontSize: 14,
+              boxSizing: "border-box",
+              outline: "none",
+              fontFamily: "'DM Sans', sans-serif",
+              color: "#0F172A",
+              background: "#F8FAFC",
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = "#7C5CFC";
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = error ? "#EF4444" : "#E2E8F0";
+            }}
+          />
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8, marginBottom: 8 }}>
+          {popularFiltered.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => pick(p)}
+              style={{
+                padding: "8px 14px",
+                borderRadius: 10,
+                border: selected === p.id ? "1.5px solid #7C5CFC" : "1.5px solid #E2E8F0",
+                background: selected === p.id ? "#7C5CFC" : "#F8FAFC",
+                color: selected === p.id ? "#fff" : "#374151",
+                fontSize: 13,
+                fontWeight: 500,
+                cursor: "pointer",
+                fontFamily: "'DM Sans', sans-serif",
+                transition: "all .15s",
+              }}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setModalOpen(true)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "#7C5CFC",
+            fontWeight: 600,
+            fontSize: 13,
+            cursor: "pointer",
+            fontFamily: "'DM Sans', sans-serif",
+            padding: "4px 0",
+          }}
+        >
+          + More Products
+        </button>
+      </div>
+
+      {modalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15,15,30,0.55)",
+            zIndex: 8000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+          }}
+          onClick={() => setModalOpen(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: "#fff",
+              borderRadius: 18,
+              width: "100%",
+              maxWidth: 420,
+              boxShadow: "0 24px 64px rgba(124,92,252,0.18)",
+              overflow: "hidden",
+              fontFamily: "'DM Sans', sans-serif",
+              animation: "scaleIn .18s ease",
+            }}
+          >
+            <div style={{ padding: "20px 20px 0", borderBottom: "1px solid #F1F5F9" }}>
+              <div style={{ fontWeight: 700, fontSize: 17, color: "#0F172A", marginBottom: 14 }}>Select Product</div>
+              <div style={{ position: "relative", marginBottom: 14 }}>
+                <span
                   style={{
-                    padding: "20px",
-                    textAlign: "center",
+                    position: "absolute",
+                    left: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
                     color: "#94A3B8",
-                    fontSize: 14,
                   }}
                 >
-                  No branches found
+                  🔍
+                </span>
+                <input
+                  autoFocus
+                  value={modalQuery}
+                  onChange={(e) => setModalQuery(e.target.value)}
+                  placeholder="Search product..."
+                  style={{
+                    width: "100%",
+                    padding: "10px 12px 10px 36px",
+                    border: "1.5px solid #E2E8F0",
+                    borderRadius: 10,
+                    fontSize: 14,
+                    boxSizing: "border-box",
+                    outline: "none",
+                    fontFamily: "'DM Sans', sans-serif",
+                  }}
+                />
+              </div>
+            </div>
+            <div style={{ maxHeight: 300, overflowY: "auto", padding: "8px 0" }}>
+              {allFiltered.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => pick(p)}
+                  style={{
+                    width: "100%",
+                    padding: "13px 20px",
+                    background: selected === p.id ? "#7C5CFC0D" : "transparent",
+                    border: "none",
+                    textAlign: "left",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: 14,
+                    color: selected === p.id ? "#7C5CFC" : "#1E293B",
+                    fontWeight: selected === p.id ? 600 : 400,
+                  }}
+                >
+                  {selected === p.id && <span style={{ color: "#7C5CFC", fontWeight: 700 }}>✓</span>}
+                  {p.name}
+                </button>
+              ))}
+              {allFiltered.length === 0 && (
+                <div style={{ padding: "20px", textAlign: "center", color: "#94A3B8", fontSize: 14 }}>
+                  No products found
                 </div>
               )}
             </div>
@@ -398,7 +637,6 @@ function Toast({ message, type, onDone }) {
 ───────────────────────────────────────── */
 export default function KitchenProduction() {
   const [records, setRecords] = useState([]);
-  const [branches, setBranches] = useState([]);
   const [products, setProducts] = useState([]);
   const [stock, setStock] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -412,15 +650,11 @@ export default function KitchenProduction() {
   const [saved, setSaved] = useState(false);
 
   const [search, setSearch] = useState("");
-  const [productSearch, setProductSearch] = useState("");
-  const [productOpen, setProductOpen] = useState(false);
 
   const [editTarget, setEditTarget] = useState(null);
   const [viewTarget, setViewTarget] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [showFormModal, setShowFormModal] = useState(false);
-
-  const productInputRef = useRef(null);
 
 useEffect(() => {
 
@@ -440,23 +674,15 @@ useEffect(() => {
       if (e.key === "Escape") {
         if (deleteConfirm) setDeleteConfirm(null);
         else if (viewTarget) setViewTarget(null);
-        else if (productOpen) setProductOpen(false);
         else if (showFormModal) {
           setShowFormModal(false);
-          setProductOpen(false);
         }
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [deleteConfirm, viewTarget, productOpen, showFormModal]);
+  }, [deleteConfirm, viewTarget, showFormModal]);
 
-  useEffect(() => {
-    if (showFormModal && productInputRef.current) {
-      const timer = setTimeout(() => productInputRef.current?.focus(), 120);
-      return () => clearTimeout(timer);
-    }
-  }, [showFormModal]);
 
   const pushToast = (type, message) => {
     setToast({ open: true, type, message });
@@ -465,24 +691,22 @@ useEffect(() => {
     }, 3200);
   };
 
-  const fetchAll = async () => {
+  const fetchAll = async (useSpinner = true) => {
     try {
-      setLoading(true);
-      const [productionRes, branchRes, productRes, stockRes] = await Promise.all([
+      if (useSpinner) setLoading(true);
+      const [productionRes, productRes, stockRes] = await Promise.all([
         instances.get("/kitchenproduction/all"),
-        instances.get("/branches/all"),
         instances.get("/product/all"),
         instances.get("/branch-stock/all"),
       ]);
       setRecords(productionRes.data || []);
-      setBranches(branchRes.data || []);
       setProducts(productRes.data || []);
       setStock(stockRes.data || []);
     } catch (error) {
       console.log(error);
       pushToast("error", "Failed to load ERP data. Please refresh.");
     } finally {
-      setLoading(false);
+      if (useSpinner) setLoading(false);
     }
   };
 
@@ -500,6 +724,33 @@ useEffect(() => {
     () => new Set(records.map((r) => r.branch?.branchname).filter(Boolean)).size,
     [records]
   );
+
+  const branchOptions = useMemo(() => {
+    const options = [...stock, ...records]
+      .map((item) => item.branch)
+      .filter(Boolean)
+      .reduce((acc, branch) => {
+        const id = branch.branchid ?? branch.branchId ?? branch.id ?? branch.branchname;
+        const name = branch.branchname || branch.name;
+        if (!id || !name) return acc;
+        if (!acc.some((b) => b.id === id)) acc.push({ id, name });
+        return acc;
+      }, []);
+    return options.sort((a, b) => a.name.localeCompare(b.name));
+  }, [stock, records]);
+
+  const productOptions = useMemo(() => {
+    return products
+      .map((p) => ({
+        id: p.itemid ?? p.id ?? p.productid ?? p.productId ?? p.itemname,
+        name: p.itemname || p.name,
+      }))
+      .filter((p) => p.id && p.name)
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }, [products]);
+
+  const selectedBranch = branchOptions.find((b) => b.id === form.branchId);
+  const selectedProduct = productOptions.find((p) => p.id === form.productId);
 
   const mostProduced = useMemo(() => {
     const counts = {};
@@ -520,22 +771,12 @@ useEffect(() => {
     );
   }, [records, search]);
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((p) =>
-      p.itemname?.toLowerCase().includes(productSearch.toLowerCase())
-    );
-  }, [products, productSearch]);
-
-  const handleProductBlur = () => {
-    setTimeout(() => setProductOpen(false), 150);
-  };
-
   const getAvailableStock = () => {
-    if (!form.kitchen || !form.product) return null;
+    if (!selectedBranch || !selectedProduct) return null;
     const stockItem = stock.find(
       (s) =>
-        s.branch?.branchname === form.kitchen &&
-        s.product?.itemname === form.product
+        s.branch?.branchname === selectedBranch.name &&
+        s.product?.itemname === selectedProduct.name
     );
     return stockItem?.qty ?? null;
   };
@@ -544,20 +785,21 @@ useEffect(() => {
 
   const validate = () => {
     const e = {};
-    if (!form.kitchen) e.kitchen = true;
-    if (!form.product) e.product = true;
+    if (!form.branchId) e.branchId = true;
+    if (!form.productId) e.productId = true;
     if (!form.qty || isNaN(form.qty) || Number(form.qty) <= 0) e.qty = true;
     setFormErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleClear = () => {
+  const handleClear = (keepModalOpen = false) => {
     setForm(EMPTY_FORM);
-    setProductSearch("");
     setEditTarget(null);
     setFormErrors({});
-    setProductOpen(false);
     setSaved(false);
+    if (!keepModalOpen) {
+      setShowFormModal(false);
+    }
   };
 
   const openCreateModal = () => {
@@ -577,8 +819,8 @@ useEffect(() => {
     setSaveLoading(true);
     try {
       const payload = {
-        branchname: form.kitchen,
-        productname: form.product,
+        branchname: selectedBranch?.name,
+        productname: selectedProduct?.name,
         qty: Number(form.qty),
         notes: form.notes,
       };
@@ -591,12 +833,15 @@ useEffect(() => {
         pushToast("success", "Production record saved successfully.");
       }
 
-      await fetchAll();
+      await fetchAll(false);
       setSaved(true);
 
       setTimeout(() => {
-        handleClear();
-        setShowFormModal(false);
+        if (editTarget) {
+          handleClear();
+        } else {
+          handleClear(true);
+        }
       }, 700);
     } catch (error) {
       console.log(error);
@@ -608,12 +853,11 @@ useEffect(() => {
 
   const handleEdit = (r) => {
     setForm({
-      kitchen: r.branch?.branchname || "",
-      product: r.product?.itemname || "",
+      branchId: r.branch?.branchid ?? r.branch?.branchId ?? r.branch?.id ?? "",
+      productId: r.product?.itemid ?? r.product?.id ?? r.product?.productid ?? r.product?.productId ?? "",
       qty: String(r.qty || ""),
       notes: r.notes || "",
     });
-    setProductSearch(r.product?.itemname || "");
     setEditTarget(r.productionid);
     setFormErrors({});
     setShowFormModal(true);
@@ -624,7 +868,7 @@ useEffect(() => {
     setDeleteLoading(true);
     try {
       await instances.delete(`/kitchenproduction/${id}`);
-      await fetchAll();
+      await fetchAll(false);
       if (editTarget === id) handleClear();
       setDeleteConfirm(null);
       pushToast("success", "Production record deleted.");
@@ -1027,7 +1271,7 @@ useEffect(() => {
               padding: 16,
               overflowY: "auto",
             }}
-            onClick={() => { setShowFormModal(false); setProductOpen(false); }}
+            onClick={() => setShowFormModal(false)}
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -1060,7 +1304,7 @@ useEffect(() => {
                   </div>
                 </div>
                 <button
-                  onClick={() => { setShowFormModal(false); setProductOpen(false); }}
+                  onClick={() => setShowFormModal(false)}
                   style={{
                     width: 34,
                     height: 34,
@@ -1081,226 +1325,88 @@ useEffect(() => {
 
               <div style={{ padding: "22px 24px", maxHeight: "80vh", overflowY: "auto" }}>
 
-                {/* Branch Picker */}
-                <div style={{ marginBottom: 18 }}>
-                  <BranchPicker
-                    branches={branches}
-                    selected={form.kitchen}
-                    onChange={(val) => setForm({ ...form, kitchen: val })}
-                    error={formErrors.kitchen}
-                  />
-                </div>
+                <BranchPicker
+                  branches={branchOptions}
+                  selected={form.branchId}
+                  onChange={(branchId) => setForm((prev) => ({ ...prev, branchId }))}
+                  error={formErrors.branchId}
+                />
 
-                {/* Product */}
-                <div style={{ marginBottom: 18 }}>
-                  <label
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#374151",
-                      display: "block",
-                      marginBottom: 6,
-                    }}
-                  >
-                    Product Name{" "}
-                    {formErrors.product && (
-                      <span style={{ color: "#EF4444", fontWeight: 400 }}>*required</span>
-                    )}
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    <span
-                      style={{
-                        position: "absolute",
-                        left: 12,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#94A3B8",
-                        pointerEvents: "none",
-                      }}
-                    >
-                      🍛
-                    </span>
-                    <input
-  ref={productInputRef}
-  value={productSearch}
-  onChange={(e) => {
-    setProductSearch(e.target.value);
-    setForm({ ...form, product: "" });
-    setProductOpen(true);
-  }}
-  onKeyDown={(e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-
-      if (!form.product && filteredProducts.length > 0) {
-        const first = filteredProducts[0];
-
-        setForm((prev) => ({
-          ...prev,
-          product: first.itemname
-        }));
-
-        setProductSearch(first.itemname);
-        setProductOpen(false);
-        return;
-      }
-
-      handleSave();
-    }
-  }}
-  placeholder="Search product…"
-  style={{
-    width: "100%",
-    padding: "10px 12px 10px 36px",
-    border: `1.5px solid ${
-      formErrors.product ? "#EF4444" : "#E2E8F0"
-    }`,
-    borderRadius: 10,
-    fontSize: 14,
-    boxSizing: "border-box",
-    outline: "none",
-    fontFamily: "'DM Sans', sans-serif",
-    color: "#0F172A",
-    background: "#FFFFFF",
-  }}
-  onFocus={(e) => {
-    e.target.style.borderColor = "#7C5CFC";
-    setProductOpen(true);
-  }}
-  onBlur={(e) => {
-    e.target.style.borderColor =
-      formErrors.product ? "#EF4444" : "#E2E8F0";
-
-    handleProductBlur();
-  }}
-/>
-
-                    {/* Product dropdown */}
-                    {productOpen && filteredProducts.length > 0 && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          left: 0,
-                          right: 0,
-                          top: "100%",
-                          marginTop: 4,
-                          zIndex: 30,
-                          borderRadius: 10,
-                          border: "1.5px solid #E2E8F0",
-                          background: "#fff",
-                          boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
-                          maxHeight: 200,
-                          overflowY: "auto",
-                        }}
-                      >
-                        {filteredProducts.map((p) => (
-                          <button
-                            key={p.itemid || p.itemname}
-                            type="button"
-                            onMouseDown={(e) => e.preventDefault()}
-                            onClick={() => {
-                              setForm({ ...form, product: p.itemname });
-                              setProductSearch(p.itemname);
-                              setProductOpen(false);
-                            }}
-                            style={{
-                              width: "100%",
-                              padding: "11px 14px",
-                              background:
-                                form.product === p.itemname ? "#7C5CFC0D" : "transparent",
-                              border: "none",
-                              textAlign: "left",
-                              cursor: "pointer",
-                              fontFamily: "'DM Sans', sans-serif",
-                              fontSize: 14,
-                              color: form.product === p.itemname ? "#7C5CFC" : "#1E293B",
-                              fontWeight: form.product === p.itemname ? 600 : 400,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            {p.itemname}
-                            {form.product === p.itemname && (
-                              <span style={{ color: "#10B981" }}>✓</span>
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {form.product && (
-                    <div style={{ marginTop: 8 }}>
-                      <Badge product={form.product} />
-                    </div>
-                  )}
-                </div>
-
-                {/* Quantity */}
-                <div style={{ marginBottom: 18 }}>
-                  <label
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#374151",
-                      display: "block",
-                      marginBottom: 6,
-                    }}
-                  >
-                    Quantity Produced{" "}
-                    {formErrors.qty && (
-                      <span style={{ color: "#EF4444", fontWeight: 400 }}>*required</span>
-                    )}
-                  </label>
-                  <div style={{ position: "relative" }}>
-                    <span
-                      style={{
-                        position: "absolute",
-                        left: 12,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        color: "#94A3B8",
-                        fontWeight: 700,
-                      }}
-                    >
-                      #
-                    </span>
-                    <input
-                      type="number"
-                      min="1"
-                      value={form.qty}
-                      onChange={(e) => setForm({ ...form, qty: e.target.value })}
-                      placeholder="e.g. 100"
-                      style={{
-                        width: "100%",
-                        padding: "10px 12px 10px 36px",
-                        border: `1.5px solid ${formErrors.qty ? "#EF4444" : "#E2E8F0"}`,
-                        borderRadius: 10,
-                        fontSize: 14,
-                        boxSizing: "border-box",
-                        outline: "none",
-                        fontFamily: "'DM Sans', sans-serif",
-                        color: "#0F172A",
-                        background: "#FFFFFF",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
-                      onBlur={(e) =>
-                        (e.target.style.borderColor = formErrors.qty ? "#EF4444" : "#E2E8F0")
-                      }
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1.8fr 1fr",
+                    gap: 18,
+                    marginBottom: 18,
+                  }}
+                >
+                  <div>
+                    <ProductPicker
+                      products={productOptions}
+                      selected={form.productId}
+                      onChange={(productId) => setForm((prev) => ({ ...prev, productId }))}
+                      error={formErrors.productId}
                     />
                   </div>
-                  {form.kitchen && form.product && getAvailableStock() !== null && (
-                    <p style={{ marginTop: 6, fontSize: 12, color: "#64748B" }}>
-                      Available stock:{" "}
-                      <span style={{ color: "#7C5CFC", fontWeight: 600 }}>
-                        {getAvailableStock()}
+
+                  <div>
+                    <label
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "#334155",
+                        display: "block",
+                        marginBottom: 8,
+                        letterSpacing: 0.8,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Quantity
+                      {formErrors.qty && (
+                        <span style={{ color: "#EF4444", fontWeight: 400, marginLeft: 6 }}>*required</span>
+                      )}
+                    </label>
+                    <div style={{ position: "relative" }}>
+                      <span
+                        style={{
+                          position: "absolute",
+                          left: 18,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "#94A3B8",
+                          fontWeight: 700,
+                        }}
+                      >
+                        #
                       </span>
-                    </p>
-                  )}
+                      <input
+                        type="number"
+                        min="1"
+                        value={form.qty}
+                        onChange={(e) => setForm({ ...form, qty: e.target.value })}
+                        placeholder="e.g. 100"
+                        style={{
+                          width: "100%",
+                          padding: "14px 18px 14px 36px",
+                          border: "1px solid #E2E8F0",
+                          borderRadius: 18,
+                          fontSize: 14,
+                          boxSizing: "border-box",
+                          outline: "none",
+                          fontFamily: "'DM Sans', sans-serif",
+                          color: "#0F172A",
+                          background: "#F8FAFC",
+                        }}
+                        onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
+                        onBlur={(e) =>
+                          (e.target.style.borderColor =
+                            formErrors.qty ? "#EF4444" : "#E2E8F0")
+                        }
+                      />
+                    </div>
+                  </div>
                 </div>
 
-                {/* Notes */}
                 <div style={{ marginBottom: 24 }}>
                   <label
                     style={{
@@ -1317,19 +1423,19 @@ useEffect(() => {
                   <textarea
                     value={form.notes}
                     onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                    placeholder="Optional notes…"
+                    placeholder="Optional notes..."
                     rows={3}
                     style={{
                       width: "100%",
-                      padding: "10px 14px",
-                      border: "1.5px solid #E2E8F0",
-                      borderRadius: 10,
+                      padding: "14px 18px",
+                      border: "1px solid #E2E8F0",
+                      borderRadius: 18,
                       fontSize: 14,
                       boxSizing: "border-box",
                       outline: "none",
                       fontFamily: "'DM Sans', sans-serif",
                       color: "#0F172A",
-                      background: "#FFFFFF",
+                      background: "#F8FAFC",
                       resize: "none",
                     }}
                     onFocus={(e) => (e.target.style.borderColor = "#7C5CFC")}
@@ -1337,53 +1443,52 @@ useEffect(() => {
                   />
                 </div>
 
-                {/* Actions */}
-                <div style={{ display: "flex", gap: 10 }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                   <button
                     onClick={handleSave}
-                    disabled={saveLoading || !form.kitchen || !form.product || !form.qty}
+                    disabled={saveLoading || !form.branchId || !form.productId || !form.qty}
                     style={{
                       flex: 1,
-                      padding: "14px",
-                      borderRadius: 12,
+                      padding: "16px 18px",
+                      borderRadius: 18,
                       border: "none",
-                      background:
-                        saved
-                          ? "#10B981"
-                          : "linear-gradient(135deg, #7C5CFC 0%, #6046E0 100%)",
+    background: "linear-gradient(135deg, #7C5CFC 0%, #6046E0 100%)",
                       color: "#fff",
                       fontWeight: 700,
                       fontSize: 15,
                       cursor: saveLoading ? "not-allowed" : "pointer",
                       fontFamily: "'DM Sans', sans-serif",
-                      boxShadow: "0 4px 16px rgba(124,92,252,0.35)",
-                      opacity: saveLoading || !form.kitchen || !form.product || !form.qty ? 0.6 : 1,
+    boxShadow: "0 4px 16px rgba(124,92,252,0.35)",
+                      opacity: saveLoading || !form.branchId || !form.productId || !form.qty ? 0.7 : 1,
                       transition: "all .2s",
                     }}
                   >
                     {saved
                       ? "✓ Saved!"
                       : saveLoading
-                      ? "Saving…"
+                      ? "Saving..."
                       : editTarget
                       ? "Update Production"
-                      : "Save Production"}
+                      : "Save production"}
                   </button>
                   <button
-                    onClick={() => { handleClear(); setShowFormModal(false); }}
+                    onClick={() => handleClear(true)}
+                    type="button"
                     style={{
-                      padding: "14px 20px",
-                      borderRadius: 12,
+                      width: 52,
+                      aspectRatio: "1 / 1",
+                      borderRadius: 18,
                       border: "1.5px solid #E2E8F0",
                       background: "#F8FAFC",
-                      color: "#374151",
-                      fontWeight: 600,
-                      fontSize: 15,
+                      color: "#334155",
+                      display: "grid",
+                      placeItems: "center",
                       cursor: "pointer",
                       fontFamily: "'DM Sans', sans-serif",
                     }}
+                    title="Clear fields"
                   >
-                    Cancel
+                    <RotateCcw size={18} />
                   </button>
                 </div>
               </div>
@@ -1603,31 +1708,39 @@ useEffect(() => {
             >
               <div
                 style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: "50%",
-                  background: "#FEE2E2",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 22,
-                  marginBottom: 16,
-                }}
+    width: 48,
+    height: 48,
+    borderRadius: "50%",
+    background: "#FEE2E2",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 22,
+    marginBottom: 16,
+    marginLeft: "auto",
+    marginRight: "auto",
+  }}
               >
                 🗑️
               </div>
               <div
-                style={{ fontWeight: 700, fontSize: 18, color: "#0F172A", marginBottom: 8 }}
-              >
+ style={{
+    fontWeight: 700,
+    fontSize: 18,
+    color: "#0F172A",
+    marginBottom: 8,
+    textAlign: "center",
+  }}              >
                 Delete Record
               </div>
               <div
-                style={{
-                  color: "#64748B",
-                  fontSize: 14,
-                  marginBottom: 24,
-                  lineHeight: 1.6,
-                }}
+                 style={{
+    color: "#64748B",
+    fontSize: 14,
+    marginBottom: 24,
+    lineHeight: 1.6,
+    textAlign: "center",
+  }}
               >
                 Are you sure you want to delete production{" "}
                 <strong style={{ color: "#7C5CFC", fontFamily: "'DM Mono', monospace" }}>

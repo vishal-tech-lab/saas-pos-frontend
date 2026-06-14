@@ -7,25 +7,17 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import Dashboard from "./pages/Dashboard/dashboard/Dashboard";
 import Reports from "./pages/Dashboard/Reports/Reports";
-import SalesOperation from "./pages/Dashboard/sales/SalesOperation";
-import FinanceOperation from "./pages/Dashboard/Finance/FinanceOperation";
-import InventoryOperation from "./pages/Dashboard/items/InventoryOperation";
+
 import Setting from "./pages/Dashboard/Settting/Setting";
 import Bill from "./pages/Dashboard/Reports/Bill";
 import MultipleBills from "./pages/Dashboard/Reports/MultipleBills";
 import Customerrecord from "./pages/Dashboard/Reports/Customerrecord";
 
 // Other Pages
-import Fianance from "./pages/Finance/Fianance";
 
 
 
-import Payment from "./pages/Finance/Payment/Payment_register/Payment";
-import Paymentedit from "./pages/Finance/Payment/Payment_edit/Paymentedit";
-import Paymentreport from "./pages/Finance/Payment/Payment_report/Paymentreport";
 
-import Expensereport from "./pages/Finance/Expense/Expensereport";
-import Expenseedit from "./pages/Finance/Expense/Expenseedit";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Utils
@@ -125,22 +117,8 @@ function App() {
 
 
 
-          {/* FINANCE */}
-          <Route
-            path="/finance"
-            element={
-              <ProtectedRoute allowedRoles={["ROLE_ADMIN", "ROLE_MANAGER", "ROLE_CASHIER"]}>
-                <Fianance />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/fianance/paymentregister" element={<Payment />} />
-          <Route path="/fianance/paymentedit" element={<Paymentedit />} />
-          <Route path="/fianance/paymentreport" element={<Paymentreport />} />
-
-          {/* EXPENSE */}
-          <Route path="/fianance/expensereport" element={<Expensereport />} />
-          <Route path="/fianance/expenseedit" element={<Expenseedit />} />
+        
+          
 
           {/* DASHBOARD */}
           <Route
@@ -156,9 +134,7 @@ function App() {
             <Route path="bill" element={<Bill />} />
             <Route path="reports/mutiplebill" element={<MultipleBills />} />
             <Route path="reports/customerrecord" element={<Customerrecord />} />
-            <Route path="salesopeartion" element={<SalesOperation />} />
-            <Route path="InventoryOperation" element={<InventoryOperation />} />
-            <Route path="FinanceOperation" element={<FinanceOperation />} />
+         
             <Route path="settings" element={<Setting />} />
             <Route path="reports/Dailysales" element={<Dailysales />} />
           </Route>

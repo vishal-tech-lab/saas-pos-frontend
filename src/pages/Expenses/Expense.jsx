@@ -65,7 +65,7 @@ function CategoryPicker({ categories, selected, onChange, onAddCategory }) {
   const [newCat, setNewCat] = useState("");
   const [addMode, setAddMode] = useState(false);
   const [saving, setSaving] = useState(false);
-
+console.log("CATEGORIES =", categories);
   const popular = categories.slice(0, 6);
   const popularFiltered = popular.filter(c =>
     c.expensecategory.toLowerCase().includes(search.toLowerCase())
@@ -533,11 +533,34 @@ function DeleteExpenseConfirm({ expense, onConfirm, onCancel }) {
           boxShadow: "0 24px 64px rgba(0,0,0,0.14)", fontFamily: "'DM Sans', sans-serif",
         }}
       >
-        <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#FEE2E2", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
+        <div style={{
+  width: 48,
+  height: 48,
+  borderRadius: "50%",
+  background: "#FEE2E2",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: 16,
+  marginLeft: "auto",
+  marginRight: "auto"
+}}>
           <Trash2 style={{ width: 22, height: 22, color: "#EF4444" }} />
         </div>
-        <div style={{ fontWeight: 700, fontSize: 18, color: "#0F172A", marginBottom: 8 }}>Delete Expense</div>
-        <div style={{ color: "#64748B", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+        <div style={{
+  fontWeight: 700,
+  fontSize: 18,
+  color: "#0F172A",
+  marginBottom: 8,
+  textAlign: "center"
+}}>Delete Expense</div>
+        <div style={{
+  color: "#64748B",
+  fontSize: 14,
+  marginBottom: 24,
+  lineHeight: 1.6,
+  textAlign: "center"
+}}>
           Delete <strong style={{ color: "#0F172A" }}>"{expense.description}"</strong> (₹{fmt(expense.amount)})? This cannot be undone.
         </div>
         <div style={{ display: "flex", gap: 10 }}>
@@ -755,9 +778,24 @@ export default function Expense() {
           </div>
 
           {/* ── FILTERS ── */}
-          <div style={{ background: "#fff", borderRadius: 14, padding: "14px 18px", marginBottom: 14, border: "1px solid #EDE9FE", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-            <div style={{ position: "relative", flex: "1 1 220px" }}>
-              <Search style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 14, height: 14, color: "#94A3B8" }} />
+<div
+  style={{
+    background: "#fff",
+    borderRadius: 14,
+    padding: "14px 18px",
+    marginBottom: 14,
+    border: "1px solid #EDE9FE",
+    display: "flex",
+    alignItems: "center",
+    gap: 10
+  }}
+>            
+<div
+  style={{
+    position: "relative",
+    width: "280px"
+  }}
+>              <Search style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", width: 14, height: 14, color: "#94A3B8" }} />
               <input
                 value={search}
                 onChange={e => setSearch(e.target.value)}

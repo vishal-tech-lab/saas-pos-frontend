@@ -393,11 +393,12 @@ const donutOptions = {
 // ─── Quick Actions ────────────────────────────────────────────────────────────
 const QUICK_ACTIONS = [
   { icon: "ti-receipt",        label: "Open POS",         sub: "Start taking orders",  page: "pos" },
-  { icon: "ti-plus",           label: "Add Product",      sub: "Menu management",      page: null },
-  { icon: "ti-user-plus",      label: "Add User",         sub: "Cashier or manager",   page: null },
-  { icon: "ti-building-store", label: "Add Branch",       sub: "Expand locations",     page: null },
+  { icon: "ti-plus",           label: "Add Product",      sub: "Menu management",      page: "products" },
+  { icon: "ti-user-plus",      label: "Add User",         sub: "Cashier or manager",   page: "staff" },
+  { icon: "ti-building-store", label: "Add Branch",       sub: "Expand locations",     page: "branches" },
+  { icon: "ti-package",        label: "Manage Inventory", sub: "Stock & reorders",     page: "inventory" },
   { icon: "ti-chart-bar",      label: "View Reports",     sub: "Full analytics",       page: null },
-  { icon: "ti-package",        label: "Manage Inventory", sub: "Stock & reorders",     page: null },
+  
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -850,6 +851,8 @@ function DashboardPage({ onNav }) {
 export default function Dashboard() {
   const [sbCollapsed, setSbCollapsed] = useState(false);
   const [activePage,  setActivePage]  = useState("dashboard");
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const features = FEATURES[user.plan] || [];
 
   const handleNav = (page) => {
       console.log("Clicked:", page);
@@ -860,35 +863,53 @@ export default function Dashboard() {
   const renderPage = () => {
     switch (activePage) {
       case "qkitchen":
-        
-return (
-    <FeatureGuard feature="KITCHEN_DISPLAY">
-      <KitchenOrders />
-    </FeatureGuard>
-  );        case "customerdis":
- return (
-    <FeatureGuard feature="CUSTOMER_DISPLAY">
-      <Customerdisplay />
-    </FeatureGuard>
-  );         case "qtracking":
-return (
-    <FeatureGuard feature="QR_ORDER">
-      <CustomerMenu />
-    </FeatureGuard>
-  );      case "pos":
+        if (!features.includes("KITCHEN_DISPLAY")) {
+          return (
+            <div style={{ padding: 24, color: "#E2E8F0" }}>
+              Upgrade to PRO Plan
+            </div>
+          );
+        }
+        return <KitchenOrders />;
+      case "customerdis":
+        if (!features.includes("CUSTOMER_DISPLAY")) {
+          return (
+            <div style={{ padding: 24, color: "#E2E8F0" }}>
+              Upgrade to PRO Plan
+            </div>
+          );
+        }
+        return <Customerdisplay />;
+      case "qtracking":
+        if (!features.includes("QR_ORDER")) {
+          return (
+            <div style={{ padding: 24, color: "#E2E8F0" }}>
+              Upgrade to PRO Plan
+            </div>
+          );
+        }
+        return <CustomerMenu />;
+      case "pos":
         return <SalesRegisterPlus />;
-       case "customer":
-  return (
-    <FeatureGuard feature="QR_ORDER">
-      <CustomerMenu />
-    </FeatureGuard>
-  );
-        case "table":
- return (
-    <FeatureGuard feature="TABLE_MASTER">
-      <TableMaster />
-    </FeatureGuard>
-  );    case "inventory":
+      case "customer":
+        if (!features.includes("QR_ORDER")) {
+          return (
+            <div style={{ padding: 24, color: "#E2E8F0" }}>
+              Upgrade to PRO Plan
+            </div>
+          );
+        }
+        return <CustomerMenu />;
+      case "table":
+        if (!features.includes("TABLE_MASTER")) {
+          return (
+            <div style={{ padding: 24, color: "#E2E8F0" }}>
+              Upgrade to PRO Plan
+            </div>
+          );
+        }
+        return <TableMaster />;
+      case "inventory":
   return <Inventory navigate={handleNav} />;
 
 case "branchstock":
