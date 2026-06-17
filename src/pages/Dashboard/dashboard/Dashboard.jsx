@@ -215,7 +215,7 @@ const css = `
   .kpi-card.stock::before  { background:linear-gradient(135deg,rgba(245,166,35,0.09),transparent); }
   .kpi-card:hover { border-color:var(--border2); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,0.3); }
   .kpi-card:hover::before { opacity:1; }
-  .kpi-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:14px; }
+  .kpi-icon { width:36px; height:36px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:0; }
   .kpi-icon.purple { background:rgba(124,92,252,0.15); color:var(--p2); }
   .kpi-icon.blue   { background:rgba(74,158,255,0.15); color:var(--blue); }
   .kpi-icon.green  { background:rgba(34,200,122,0.15); color:var(--green); }
@@ -228,8 +228,13 @@ const css = `
   .trend-label{ color:var(--t3); font-weight:400; }
 
   /* ── Grids ── */
-  .grid2      { display:grid; grid-template-columns:3fr 2fr; gap:14px; margin-bottom:22px; align-items:start; }
-  .grid2-equal{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; align-items:start; }
+.grid2 {
+  display:grid;
+  grid-template-columns:3fr 2fr;
+  gap:14px;
+  margin-bottom:22px;
+  align-items:stretch;
+}  .grid2-equal{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:22px; align-items:stretch; }
 
   /* ── Card ── */
   .card { background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
@@ -392,21 +397,69 @@ const donutOptions = {
 
 // ─── Quick Actions ────────────────────────────────────────────────────────────
 const QUICK_ACTIONS = [
-  { icon: "ti-receipt",        label: "Open POS",         sub: "Start taking orders",  page: "pos" },
-  { icon: "ti-plus",           label: "Add Product",      sub: "Menu management",      page: "products" },
-  { icon: "ti-user-plus",      label: "Add User",         sub: "Cashier or manager",   page: "staff" },
-  { icon: "ti-building-store", label: "Add Branch",       sub: "Expand locations",     page: "branches" },
-  { icon: "ti-package",        label: "Manage Inventory", sub: "Stock & reorders",     page: "inventory" },
-  { icon: "ti-chart-bar",      label: "View Reports",     sub: "Full analytics",       page: null },
-  
+  {
+    icon: "ti-receipt",
+    label: "Open POS",
+    sub: "Start taking orders",
+    page: "pos",
+    feature: "POS"
+  },
+  {
+    icon: "ti-plus",
+    label: "Add Product",
+    sub: "Menu management",
+    page: "products",
+    feature: "PRODUCTS"
+  },
+  {
+    icon: "ti-package",
+    label: "Manage Inventory",
+    sub: "Stock & reorders",
+    page: "inventory",
+    feature: "INVENTORY"
+  },
+
+  {
+    icon: "ti-user-plus",
+    label: "Add User",
+    sub: "Cashier or manager",
+    page: "staff",
+    feature: "PRO_ONLY"
+  },
+  {
+    icon: "ti-building-store",
+    label: "Add Branch",
+    sub: "Expand locations",
+    page: "branches",
+    feature: "PRO_ONLY"
+  },
+  {
+    icon: "ti-chart-bar",
+    label: "View Reports",
+    sub: "Full analytics",
+    page: null,
+    feature: "PRO_ONLY"
+  }
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 function KpiCard({ variant, iconClass, iconColor, label, value, trendUp, trendPct, trendSub }) {
   return (
     <div className={`kpi-card ${variant}`}>
-      <div className={`kpi-icon ${iconColor}`}><i className={`ti ${iconClass}`} aria-hidden="true" /></div>
-      <div className="kpi-label">{label}</div>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "10px"
+  }}
+>
+  <div className={`kpi-icon ${iconColor}`}>
+    <i className={`ti ${iconClass}`} />
+  </div>     <div className="kpi-label">
+    {label}
+  </div>
+</div>
       <div className="kpi-value">{value}</div>
       <div className={`kpi-trend ${trendUp ? "trend-up" : "trend-down"}`}>
         <i className={`ti ${trendUp ? "ti-trending-up" : "ti-trending-down"}`} aria-hidden="true" />
@@ -445,15 +498,13 @@ function Clock() {
 const NAV_ITEMS = [
   { section: null,      icon: "ti-layout-dashboard", label: "Dashboard", page: "dashboard" },
   { section: null,      icon: "ti-receipt",           label: "POS",       page: "pos",      badge: "Live", feature: "POS" },
-  { section: "Manage",  icon: "ti-package",           label: "Inventory", page: "inventory",       badge: "12", feature: "INVENTORY" },
+  { section: "Manage",  icon: "ti-package",           label: "Inventory", page: "inventory",        feature: "INVENTORY" },
   { section: null,      icon: "ti-tools-kitchen-2",   label: "Products",  page: "products", feature: "PRODUCTS" },
   { section: null,      icon: "ti-users",             label: "Staff",     page: "staff", feature: "STAFF" },
   { section: null,      icon: "ti-building-store",    label: "Branches",  page: "branches", feature: "BRANCHES" },
-  { section: "Insights",      icon: "ti-wallet",            label: "Expenses",  page: "expenses" },
-  { section: "Insights",      icon: "ti-wallet",       label: "Customer",  page: "customer", feature: "QR_ORDER" },
-  { section: "Insights",      icon: "ti-wallet",       label: "Table",  page: "table", feature: "TABLE_MASTER" },
-  { section: "Insights",      icon: "ti-wallet",       label: "Kitchen",  page: "qkitchen", feature: "KITCHEN_DISPLAY" },
-  { section: "Insights",      icon: "ti-wallet",       label: "Customer Display",  page: "customerdis", feature: "CUSTOMER_DISPLAY" },
+  { section: "OPERATIONS",      icon: "ti-cash",            label: "Expenses",  page: "expenses" },
+  { section: "OPERATIONS",      icon: "ti-wallet",       label: "Customer",  page: "customer", feature: "QR_ORDER" },
+  { section: "OPERATIONS",      icon: "ti-table",       label: "Table",  page: "table", feature: "TABLE_MASTER" },
 ];
 
 function Sidebar({ collapsed, onToggle, onNav, activePage }) {
@@ -595,13 +646,35 @@ function DashboardPage({ onNav }) {
   const daysMap = { today: 1, "7d": 7, "30d": 30 };
   const cur = salesChart[daysMap[salesTab]] || { labels: [], data: [], total: "", label: "" };
 
+  function EmptyState({ title, subtitle }) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        padding: 24,
+        color: 'var(--t3)'
+      }}>
+        <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, color: 'var(--t1)' }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 13 }}>{subtitle}</div>}
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="topbar">
         <div className="topbar-left">
           <div className="greeting">
-            <h1>Good Morning, {user.username}</h1>
-            <p>Here's your restaurant performance at a glance</p>
+           <h1>
+  Dashboard Overview
+</h1>
+
+<p>
+  Welcome back, {user.username}
+</p>
           </div>
         </div>
         <div className="topbar-right">
@@ -650,8 +723,14 @@ function DashboardPage({ onNav }) {
 
         {/* Sales Chart + Top Sellers */}
         <div className="grid2">
-          <div className="card">
-            <div className="card-header">
+<div
+  className="card"
+  style={{
+    minHeight: "320px",
+    display: "flex",
+    flexDirection: "column"
+  }}
+>          <div className="card-header">
               <div>
                 <div className="card-title">Sales Analytics</div>
                 <div className="card-sub">{cur.label || ''}</div>
@@ -670,20 +749,24 @@ function DashboardPage({ onNav }) {
               </div>
             </div>
             <div style={{ position: "relative", height: 200, marginTop: 18, paddingBottom: 10 }}>
-              <Bar
-                key={salesTab}
-                data={{
-                  labels: cur.labels || [],
-                  datasets: [{
-                    label: "Sales", data: cur.data || [],
-                    backgroundColor: "rgba(124,92,252,0.72)",
-                    borderRadius: 5, borderSkipped: false,
-                    hoverBackgroundColor: "rgba(155,130,253,0.9)",
-                  }]
-                }}
-                options={salesOptions}
-                aria-label={`Sales chart — ${cur.label || ''}`}
-              />
+              {(cur?.data && cur.data.length) ? (
+                <Bar
+                  key={salesTab}
+                  data={{
+                    labels: cur.labels || [],
+                    datasets: [{
+                      label: "Sales", data: cur.data || [],
+                      backgroundColor: "rgba(124,92,252,0.72)",
+                      borderRadius: 5, borderSkipped: false,
+                      hoverBackgroundColor: "rgba(155,130,253,0.9)",
+                    }]
+                  }}
+                  options={salesOptions}
+                  aria-label={`Sales chart — ${cur.label || ''}`}
+                />
+              ) : (
+                <EmptyState title="No sales data yet" subtitle="Start selling to view analytics" />
+              )}
             </div>
           </div>
 
@@ -692,7 +775,7 @@ function DashboardPage({ onNav }) {
               <div><div className="card-title">Top Sellers</div><div className="card-sub">By quantity today</div></div>
               <i className="ti ti-flame" style={{ color: "var(--amber)", fontSize: 18 }} aria-hidden="true" />
             </div>
-            {topProducts.map((s, idx) => {
+            {topProducts && topProducts.length ? topProducts.map((s, idx) => {
               const count = getProductCount(s);
               const maxCount = topProducts.length ? Math.max(...topProducts.map(getProductCount)) : 0;
               const pct = s.pct ?? (maxCount ? Math.round((count / maxCount) * 100) : 0);
@@ -707,14 +790,22 @@ function DashboardPage({ onNav }) {
                   <span className="rank-rev">{getProductRevenue(s, formatter)}</span>
                 </div>
               );
-            })}
+            }) : (
+              <div style={{ padding: 24 }}><EmptyState title="No sales data yet" subtitle="Start selling to view analytics" /></div>
+            )}
           </div>
         </div>
 
         {/* P&L + Stock Status */}
         <div className="grid2-equal">
-          <div className="card">
-            <div className="card-header"><div><div className="card-title">Profit & Loss</div><div className="card-sub">Last 30 days</div></div></div>
+<div
+  className="card"
+  style={{
+    height: "100%",
+    display: "flex",
+    flexDirection: "column"
+  }}
+>          <div className="card-header"><div><div className="card-title">Profit & Loss</div><div className="card-sub">Last 30 days</div></div></div>
             <div className="pnl-row">
               <div className="pnl-stat">
                 <div className="pnl-label">Total Sales</div>
@@ -736,17 +827,21 @@ function DashboardPage({ onNav }) {
               </div>
             </div>
             <div style={{ position: "relative", height: 180 }}>
-              <Bar
-                data={{
-                  labels: ["Last 30d"],
-                  datasets: [
-                    { label: "Sales",    data: [profitLoss?.totalSales || 0],    backgroundColor: "rgba(74,158,255,0.75)" },
-                    { label: "Expenses", data: [profitLoss?.totalExpenses || 0], backgroundColor: "rgba(244,91,105,0.75)" },
-                    { label: "Profit",   data: [profitLoss?.netProfit || 0],     backgroundColor: "rgba(34,200,122,0.75)" },
-                  ]
-                }}
-                options={pnlOptions}
-              />
+              {((profitLoss && ((profitLoss.totalSales || 0) || (profitLoss.totalExpenses || 0) || (profitLoss.netProfit || 0)))) ? (
+                <Bar
+                  data={{
+                    labels: ["Last 30d"],
+                    datasets: [
+                      { label: "Sales",    data: [profitLoss?.totalSales || 0],    backgroundColor: "rgba(74,158,255,0.75)" },
+                      { label: "Expenses", data: [profitLoss?.totalExpenses || 0], backgroundColor: "rgba(244,91,105,0.75)" },
+                      { label: "Profit",   data: [profitLoss?.netProfit || 0],     backgroundColor: "rgba(34,200,122,0.75)" },
+                    ]
+                  }}
+                  options={pnlOptions}
+                />
+              ) : (
+                <EmptyState title="No sales data yet" subtitle="Start selling to view analytics" />
+              )}
             </div>
           </div>
 
@@ -759,11 +854,27 @@ function DashboardPage({ onNav }) {
                   s.status?.toLowerCase().includes('medium') ? 'badge-amber' : 'badge-green'
                 );
                 return (
-                  <div className="stock-row" key={s.id || getStockName(s) || idx}>
-                    <span className="stock-name">{getStockName(s)}</span>
-                    <span className="stock-qty">{getStockQty(s)}</span>
-                    <span className={`badge ${badge}`}>{s.status}</span>
-                  </div>
+               <div className="stock-row">
+  <div style={{ flex: 1 }}>
+    <div className="stock-name">
+      {getStockName(s)}
+    </div>
+
+    <div
+      style={{
+        fontSize: "11px",
+        color: "var(--t3)",
+        marginTop: "2px"
+      }}
+    >
+      {getStockQty(s)} units
+    </div>
+  </div>
+
+  <span className={`badge ${badge}`}>
+    {s.status}
+  </span>
+</div>
                 );
               })}
             </div>
@@ -801,7 +912,7 @@ function DashboardPage({ onNav }) {
             </div>
             <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
               <div style={{ width: 140, height: 140, flexShrink: 0 }}>
-                {expenses30Days?.amounts && (
+                {((expenses30Days?.amounts && expenses30Days.amounts.reduce((a,b)=>a+(b||0),0) > 0)) ? (
                   <Doughnut
                     data={{
                       labels: expenses30Days.labels || [],
@@ -810,6 +921,8 @@ function DashboardPage({ onNav }) {
                     options={donutOptions}
                     aria-label="Expense donut chart"
                   />
+                ) : (
+                  <EmptyState title="No expense data yet" subtitle="Start selling to view analytics" />
                 )}
               </div>
               <div className="donut-legend" style={{ flex: 1 }}>
@@ -832,7 +945,12 @@ function DashboardPage({ onNav }) {
         {/* Quick Actions */}
         <div className="section-title">Quick Actions</div>
         <div className="actions-grid">
-          {QUICK_ACTIONS.map(a => (
+          {QUICK_ACTIONS
+  .filter(a =>
+    a.feature !== "PRO_ONLY" ||
+    user.plan === "PRO"
+  )
+  .map(a => (
             <div className="action-btn" key={a.label} onClick={() => a.page && onNav(a.page)}>
               <div className="action-icon"><i className={`ti ${a.icon}`} aria-hidden="true" /></div>
               <div>

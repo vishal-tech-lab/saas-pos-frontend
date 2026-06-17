@@ -1,0 +1,9 @@
+fileType: momentic/test/v2
+id: eightyone-ideal-people-bounds-tidily
+version: 1.0.24
+url: http://test.localhost:5173
+description: Verify that admin can login successfully and reach dashboard.
+viewport: 1920, 1080
+browserType: Chromium
+steps:
+  - type: testadmin

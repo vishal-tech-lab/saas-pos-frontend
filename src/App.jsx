@@ -15,9 +15,6 @@ import Customerrecord from "./pages/Dashboard/Reports/Customerrecord";
 
 // Other Pages
 
-
-
-
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Utils

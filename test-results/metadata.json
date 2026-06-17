@@ -1,0 +1,41 @@
+{
+  "gitMainBranch": "main",
+  "gitProtectedBranches": [
+    "main"
+  ],
+  "ciProvider": "none",
+  "gitCommitSha": "e6e41e4183e1812b68743069e62b73b97f9f3969",
+  "gitCommitShaShort": "e6e41e4",
+  "gitBranchName": "main",
+  "gitOriginUrl": "https://github.com/vishal-tech-lab/saas-pos-frontend.git",
+  "gitCommitTimestamp": "2026-06-14T05:28:56.000Z",
+  "gitCommitMessage": "Added tenant creation page",
+  "gitCommitAuthorName": "Vijay",
+  "gitLocalEmail": "vijay@example.com",
+  "gitLocalName": "Vijay",
+  "lastCommitOnMainSha": "e6e41e4183e1812b68743069e62b73b97f9f3969",
+  "lastCommitOnMainTimestamp": "2026-06-14T05:28:56.000Z",
+  "githubRepository": "vishal-tech-lab/saas-pos-frontend",
+  "id": "a57489cf-c5d5-4023-a30f-6bdbf1fb50f2",
+  "trigger": "CLI",
+  "startedAt": "2026-06-16T16:43:08.827Z",
+  "status": "FAILED",
+  "cliVersion": "2.139.0",
+  "labels": [],
+  "ai": {
+    "useMemory": true,
+    "failureRecovery": true,
+    "agentConfig": {
+      "locator": "v4",
+      "assertion": "v4",
+      "visual-assertion": "v4",
+      "text-extraction": "v3",
+      "failure-recovery": "v2"
+    }
+  },
+  "browser": {
+    "autoExpandIframes": true
+  },
+  "updatedAt": "2026-06-16T16:43:11.822Z",
+  "finishedAt": "2026-06-16T16:43:11.822Z"
+}

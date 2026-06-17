@@ -1,0 +1,27 @@
+# See https://momentic.ai/docs/cli/configuration
+name: saas-pos
+include:
+  - "**/*.test.yaml"
+  - "**/*.module.yaml"
+retries: 0
+parallel: 1
+recordVideo: true
+gitMainBranch: main
+fileFormat: v2
+browser:
+  autoExpandIframes: true
+ai:
+  useMemory: true
+  failureRecovery: true
+  agentConfig:
+    locator: v4
+    assertion: v4
+    visual-assertion: v4
+    text-extraction: v3
+    failure-recovery: v2
+environments:
+  - name: web
+    baseUrl: https://static.momentic.ai/wizard/index.html
+    envVariables:
+      USERNAME: standard_user
+      PASSWORD: secret_sauce

@@ -249,9 +249,9 @@ localStorage.setItem("currentBranch",data.branchname);
       }
     } catch (err) {
       flashAuth(
-        err.response?.data?.message || "Login Failed",
-        "error"
-      );
+  "Invalid username or password",
+  "error"
+);
     } finally {
       setLoading(false);
     }
